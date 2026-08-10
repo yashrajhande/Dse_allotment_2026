@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DSE 2026 — CAP Allotment Search</title>
-  <meta name="description" content="Search DSE 2026 Direct Second Year Engineering CAP Round allotment results by student name or Application ID." />
+  <title>DSE 2026 — CAP Allotment Search & Cut-offs</title>
+  <meta name="description" content="Search DSE 2026 Direct Second Year Engineering CAP Round allotment results and calculate cut-offs." />
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -54,16 +54,21 @@
     }
     .header-right small { font-weight: 400; color: #90a4ae; display: block; }
 
-    /* ── ROUND TABS ── */
-    .round-tabs {
+    /* ── TABS ── */
+    .tabs-container {
       background: #fff;
       border-bottom: 1px solid #dce3f0;
       padding: 0 24px;
       display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .round-tabs, .view-tabs {
+      display: flex;
       gap: 0;
     }
-    .round-tab {
-      padding: 10px 22px;
+    .tab {
+      padding: 10px 20px;
       font-size: 13px;
       font-weight: 600;
       color: #546e7a;
@@ -72,10 +77,19 @@
       margin-bottom: -1px;
       user-select: none;
     }
-    .round-tab:hover { color: #1565c0; background: #f5f8ff; }
-    .round-tab.active { color: #1565c0; border-bottom-color: #1565c0; }
-    .round-tab.disabled { color: #b0bec5; cursor: not-allowed; }
-    .round-tab .badge-coming {
+    .tab:hover { color: #1565c0; background: #f5f8ff; }
+    .tab.active { color: #1565c0; border-bottom-color: #1565c0; }
+    .tab.disabled { color: #b0bec5; cursor: not-allowed; }
+    
+    .view-tabs .tab {
+      color: #0288d1;
+    }
+    .view-tabs .tab.active {
+      color: #01579b;
+      border-bottom-color: #0288d1;
+    }
+
+    .badge-coming {
       font-size: 9px;
       background: #fff3cd;
       color: #c67700;
@@ -89,7 +103,7 @@
 
     /* ── WRAPPER ── */
     .wrapper {
-      max-width: 960px;
+      max-width: 1000px;
       margin: 0 auto;
       padding: 20px 16px 40px;
     }
@@ -103,12 +117,14 @@
       margin-bottom: 14px;
       box-shadow: 0 1px 4px rgba(0,0,0,0.06);
     }
-    .search-card label {
+    .search-card label.main-label {
       display: block;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 700;
       color: #37474f;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #f0f4f8;
+      padding-bottom: 6px;
     }
     .search-row { display: flex; gap: 10px; align-items: center; }
     #searchInput {
@@ -133,6 +149,31 @@
     }
     #clearBtn:hover { background: #cfd8dc; }
     .search-hint { margin-top: 6px; font-size: 11.5px; color: #78909c; }
+
+    /* ── CUTOFF CONTROLS ── */
+    .filters-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+    .filter-group label {
+      display: block;
+      font-size: 11.5px;
+      color: #546e7a;
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+    .filter-group select {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1.5px solid #90a4ae;
+      border-radius: 3px;
+      font-size: 13px;
+      outline: none;
+      background: #fff;
+    }
+    .filter-group select:focus { border-color: #0288d1; }
 
     /* ── STATUS ── */
     .status {
@@ -163,15 +204,8 @@
       color: #fff;
       padding: 12px 18px;
     }
-    .college-banner .college-name {
-      font-size: 17px;
-      font-weight: 700;
-    }
-    .college-banner .college-sub {
-      font-size: 12px;
-      color: #bbdefb;
-      margin-top: 2px;
-    }
+    .college-banner .college-name { font-size: 17px; font-weight: 700; }
+    .college-banner .college-sub { font-size: 12px; color: #bbdefb; margin-top: 2px; }
     .detail-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -186,12 +220,9 @@
       color: #90a4ae;
       margin-bottom: 2px;
     }
-    .detail-value {
-      font-size: 13.5px;
-      font-weight: 700;
-      color: #1a237e;
-    }
+    .detail-value { font-size: 13.5px; font-weight: 700; color: #1a237e; }
     .detail-value.name-val { font-size: 15px; color: #0d47a1; }
+    
     .badge {
       display: inline-block;
       padding: 2px 9px;
@@ -202,6 +233,7 @@
     .badge-M { background: #e3f2fd; color: #0d47a1; }
     .badge-F { background: #fce4ec; color: #880e4f; }
     .badge-seat { background: #fff8e1; color: #e65100; border: 1px solid #ffe082; }
+    
     .course-row {
       border-top: 1px solid #f0f4f8;
       padding: 8px 18px;
@@ -209,6 +241,38 @@
       color: #546e7a;
     }
     .course-row strong { color: #1a237e; }
+
+    /* ── CUTOFF TABLE ── */
+    .table-wrapper {
+      background: #fff;
+      border: 1px solid #dce3f0;
+      border-radius: 4px;
+      overflow-x: auto;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    table.cutoff-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    table.cutoff-table thead { background: #f8f9fa; border-bottom: 2px solid #cfd8dc; }
+    table.cutoff-table th {
+      padding: 10px 12px;
+      text-align: left;
+      color: #37474f;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    table.cutoff-table tbody tr { border-bottom: 1px solid #eceff1; }
+    table.cutoff-table tbody tr:hover { background: #f5f8ff; }
+    table.cutoff-table td { padding: 9px 12px; color: #1a237e; }
+    table.cutoff-table td.col-marks {
+      font-weight: 700;
+      color: #c62828;
+      font-size: 14px;
+    }
+    table.cutoff-table td.col-college { color: #546e7a; }
+    table.cutoff-table td.col-college strong { color: #1565c0; display: block; margin-bottom: 2px; }
 
     /* ── PAGINATION ── */
     .pagination { margin-top: 14px; display: flex; gap: 4px; flex-wrap: wrap; }
@@ -270,40 +334,81 @@
   </div>
 </div>
 
-<!-- ROUND TABS -->
-<div class="round-tabs">
-  <div class="round-tab active" id="tab-1" onclick="switchRound(1)">CAP Round I</div>
-  <div class="round-tab disabled" id="tab-2">
-    CAP Round II <span class="badge-coming">Results: 14 Aug</span>
+<!-- TABS -->
+<div class="tabs-container">
+  <div class="round-tabs">
+    <div class="tab active" id="tab-1" onclick="switchRound(1)">CAP Round I</div>
+    <div class="tab disabled" id="tab-2">
+      CAP Round II <span class="badge-coming">Results: 14 Aug</span>
+    </div>
+  </div>
+  <div class="view-tabs">
+    <div class="tab active" id="viewTab-search" onclick="switchView('search')">Student Search</div>
+    <div class="tab" id="viewTab-cutoff" onclick="switchView('cutoff')">Cut-off Analyzer</div>
   </div>
 </div>
 
 <!-- MAIN -->
 <div class="wrapper">
-
-  <!-- SEARCH -->
-  <div class="search-card">
-    <label for="searchInput" id="searchLabel">Search in CAP Round I — By Student Name or Application ID</label>
-    <div class="search-row">
-      <input type="text" id="searchInput"
-             placeholder="Start typing a name or enter DSE26XXXXXX..."
-             autocomplete="off" spellcheck="false" />
-      <button id="clearBtn" onclick="clearSearch()">✕ Clear</button>
-    </div>
-    <div class="search-hint">
-      Results appear instantly as you type. Min. 2 characters. App ID format: <strong>DSE26XXXXXX</strong>
-    </div>
-  </div>
-
+  
   <!-- STATUS -->
-  <div class="status info" id="statusBar">⏳ Loading CAP Round I data...</div>
+  <div class="status info" id="statusBar">⏳ Loading data...</div>
 
-  <!-- RESULTS -->
-  <div class="results-meta" id="resultsMeta" style="display:none"></div>
-  <div id="resultsArea">
-    <div class="placeholder"><div class="icon">🔍</div>Loading data...</div>
+  <!-- ==================== STUDENT SEARCH VIEW ==================== -->
+  <div id="searchView">
+    <div class="search-card">
+      <label class="main-label" id="searchLabel">Search Students — CAP Round I</label>
+      <div class="search-row">
+        <input type="text" id="searchInput"
+               placeholder="Start typing a name or enter DSE26XXXXXX..."
+               autocomplete="off" spellcheck="false" />
+        <button id="clearBtn" onclick="clearSearch()">✕ Clear</button>
+      </div>
+      <div class="search-hint">
+        Results appear instantly as you type. Min. 2 characters. App ID format: <strong>DSE26XXXXXX</strong>
+      </div>
+    </div>
+
+    <div class="results-meta" id="resultsMeta" style="display:none"></div>
+    <div id="resultsArea">
+      <div class="placeholder"><div class="icon">🔍</div>Loading data...</div>
+    </div>
+    <div class="pagination" id="pagination"></div>
   </div>
-  <div class="pagination" id="pagination"></div>
+
+
+  <!-- ==================== CUTOFF ANALYZER VIEW ==================== -->
+  <div id="cutoffView" style="display:none">
+    <div class="search-card">
+      <label class="main-label" id="cutoffLabel">Cut-off Analyzer — CAP Round I</label>
+      <div class="filters-grid">
+        <div class="filter-group">
+          <label for="cutoffCollege">Select College</label>
+          <select id="cutoffCollege" onchange="calculateCutoffs()">
+            <option value="">-- All Colleges --</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="cutoffCourse">Select Course</label>
+          <select id="cutoffCourse" onchange="calculateCutoffs()">
+            <option value="">-- All Courses --</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="cutoffSeatType">Select Seat Type (Category)</label>
+          <select id="cutoffSeatType" onchange="calculateCutoffs()">
+            <option value="">-- All Seat Types --</option>
+          </select>
+        </div>
+      </div>
+      <div class="search-hint">Select a college, course, or seat type to instantly view the lowest cut-off marks.</div>
+    </div>
+
+    <div class="results-meta" id="cutoffMeta" style="display:none"></div>
+    <div id="cutoffResultsArea">
+      <div class="placeholder"><div class="icon">📊</div>Select filters above to analyze cut-offs.</div>
+    </div>
+  </div>
 
 </div>
 
@@ -319,7 +424,10 @@
 <script>
   // ── STATE ─────────────────────────────────────────────────────────────────
   let currentRound   = 1;
-  let rounds         = { 1: null, 2: null };   // null = not loaded, [] = loaded data
+  let currentView    = 'search'; // 'search' or 'cutoff'
+  let rounds         = { 1: null, 2: null }; 
+  
+  // Search state
   let nameIndexes    = { 1: [], 2: [] };
   let idIndexes      = { 1: [], 2: [] };
   let filtered       = [];
@@ -327,33 +435,48 @@
   const PAGE_SIZE    = 20;
   let debounceTimer  = null;
 
-  // ── ROUND SWITCH ──────────────────────────────────────────────────────────
+  // Cutoff state
+  let cutoffResults  = [];
+
+  // ── ROUND / VIEW SWITCH ───────────────────────────────────────────────────
   function switchRound(round) {
-    // Don't switch to a disabled round
     if (document.getElementById('tab-' + round).classList.contains('disabled')) return;
 
     currentRound = round;
-    document.querySelectorAll('.round-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.round-tabs .tab').forEach(t => t.classList.remove('active'));
     document.getElementById('tab-' + round).classList.add('active');
-    document.getElementById('searchLabel').textContent =
-      `Search in CAP Round ${round === 1 ? 'I' : 'II'} — By Student Name or Application ID`;
+    
+    document.getElementById('searchLabel').textContent = `Search Students — CAP Round ${round === 1 ? 'I' : 'II'}`;
+    document.getElementById('cutoffLabel').textContent = `Cut-off Analyzer — CAP Round ${round === 1 ? 'I' : 'II'}`;
 
     clearSearch();
 
     if (rounds[round] === null) {
       loadRound(round);
     } else {
-      const n = rounds[round].length;
-      const c = new Set(rounds[round].map(d => d.collegeCode)).size;
-      setStatus(`✅ ${n.toLocaleString()} records from ${c} colleges loaded. Start typing to search.`, 'ok');
-      setPlaceholder('🔍', 'Start typing a student name or Application ID above.');
+      updateLoadedStatus(round);
+      if (currentView === 'cutoff') populateDropdowns();
+    }
+  }
+
+  function switchView(view) {
+    currentView = view;
+    document.querySelectorAll('.view-tabs .tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('viewTab-' + view).classList.add('active');
+
+    document.getElementById('searchView').style.display = view === 'search' ? 'block' : 'none';
+    document.getElementById('cutoffView').style.display = view === 'cutoff' ? 'block' : 'none';
+
+    if (view === 'cutoff' && rounds[currentRound]) {
+      populateDropdowns();
+      calculateCutoffs();
     }
   }
 
   // ── LOAD DATA ─────────────────────────────────────────────────────────────
   function loadRound(round) {
     setStatus(`⏳ Loading CAP Round ${round === 1 ? 'I' : 'II'} data...`, 'info');
-    setPlaceholder('⏳', 'Loading allotment data, please wait...');
+    setPlaceholder('search', '⏳', 'Loading allotment data, please wait...');
 
     fetch(`data/allotments_round${round}.json`)
       .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
@@ -361,15 +484,28 @@
         rounds[round] = data;
         nameIndexes[round] = data.map(r => r.name.toUpperCase());
         idIndexes[round]   = data.map(r => r.appId.toUpperCase());
-        const colleges = new Set(data.map(d => d.collegeCode)).size;
-        setStatus(`✅ ${data.length.toLocaleString()} records from ${colleges} colleges loaded. Start typing to search.`, 'ok');
-        setPlaceholder('🔍', 'Start typing a student name or Application ID above to see results instantly.');
-        document.getElementById('searchInput').focus();
+        updateLoadedStatus(round);
+        
+        if (currentView === 'cutoff') {
+          populateDropdowns();
+          calculateCutoffs();
+        }
       })
       .catch(err => {
         rounds[round] = [];
         setStatus(`❌ Could not load Round ${round} data. ${err.message}. Make sure you are running this via a local server (http://localhost:8000).`, 'error');
       });
+  }
+
+  function updateLoadedStatus(round) {
+    const data = rounds[round];
+    if (!data) return;
+    const colleges = new Set(data.map(d => d.collegeCode)).size;
+    setStatus(`✅ ${data.length.toLocaleString()} records from ${colleges} colleges loaded.`, 'ok');
+    
+    if (!document.getElementById('searchInput').value) {
+      setPlaceholder('search', '🔍', 'Start typing a student name or Application ID above to see results instantly.');
+    }
   }
 
   // ── LIVE SEARCH ───────────────────────────────────────────────────────────
@@ -391,10 +527,8 @@
       filtered = [];
       document.getElementById('resultsMeta').style.display = 'none';
       document.getElementById('pagination').innerHTML = '';
-      setPlaceholder(q.length === 0 ? '🔍' : '⚠️',
-        q.length === 0
-          ? 'Start typing a student name or Application ID above.'
-          : 'Type at least 2 characters to search.');
+      setPlaceholder('search', q.length === 0 ? '🔍' : '⚠️',
+        q.length === 0 ? 'Start typing a student name or Application ID above.' : 'Type at least 2 characters to search.');
       return;
     }
 
@@ -409,7 +543,7 @@
     setStatus(`✅ Found ${filtered.length.toLocaleString()} record(s) in ${ms} ms.`, 'ok');
 
     currentPage = 1;
-    renderResults();
+    renderSearchResults();
   }
 
   function clearSearch() {
@@ -418,15 +552,151 @@
     filtered = [];
     document.getElementById('resultsMeta').style.display = 'none';
     document.getElementById('pagination').innerHTML = '';
-    const data = rounds[currentRound];
-    if (data && data.length) {
-      setPlaceholder('🔍', 'Start typing a student name or Application ID above.');
+    if (rounds[currentRound] && rounds[currentRound].length) {
+      setPlaceholder('search', '🔍', 'Start typing a student name or Application ID above.');
     }
-    document.getElementById('searchInput').focus();
   }
 
-  // ── RENDER ────────────────────────────────────────────────────────────────
-  function renderResults() {
+  // ── CUTOFF ANALYZER ───────────────────────────────────────────────────────
+  let dropdownsPopulatedForRound = null;
+
+  function populateDropdowns() {
+    if (dropdownsPopulatedForRound === currentRound) return;
+    const data = rounds[currentRound];
+    if (!data || !data.length) return;
+
+    const colMap = new Map();
+    const courses = new Set();
+    const seatTypes = new Set();
+
+    data.forEach(r => {
+      colMap.set(r.collegeCode, r.collegeName);
+      if(r.course) courses.add(r.course);
+      if(r.seatType) seatTypes.add(r.seatType);
+    });
+
+    const populate = (id, items, mapFn) => {
+      const select = document.getElementById(id);
+      const val = select.value;
+      select.innerHTML = select.firstElementChild.outerHTML; // Keep first default option
+      items.sort().forEach(item => {
+        const opt = document.createElement('option');
+        opt.value = item;
+        opt.textContent = mapFn ? mapFn(item) : item;
+        select.appendChild(opt);
+      });
+      select.value = val; // Try to retain previous selection
+    };
+
+    populate('cutoffCollege', Array.from(colMap.keys()), code => `${colMap.get(code)} (${code})`);
+    populate('cutoffCourse', Array.from(courses));
+    populate('cutoffSeatType', Array.from(seatTypes));
+
+    dropdownsPopulatedForRound = currentRound;
+  }
+
+  function calculateCutoffs() {
+    const data = rounds[currentRound];
+    if (!data || !data.length) return;
+
+    const filterCol = document.getElementById('cutoffCollege').value;
+    const filterCourse = document.getElementById('cutoffCourse').value;
+    const filterSeat = document.getElementById('cutoffSeatType').value;
+
+    const t0 = performance.now();
+    const groups = new Map();
+
+    for (let i = 0; i < data.length; i++) {
+      const r = data[i];
+      if (filterCol && r.collegeCode !== filterCol) continue;
+      if (filterCourse && r.course !== filterCourse) continue;
+      if (filterSeat && r.seatType !== filterSeat) continue;
+
+      const key = `${r.collegeCode}|${r.course}|${r.seatType}`;
+      if (!groups.has(key)) {
+        groups.set(key, {
+          collegeCode: r.collegeCode,
+          collegeName: r.collegeName,
+          course: r.course,
+          seatType: r.seatType,
+          minMarks: r.marks,
+          maxMarks: r.marks,
+          count: 1
+        });
+      } else {
+        const g = groups.get(key);
+        if (r.marks < g.minMarks) g.minMarks = r.marks;
+        if (r.marks > g.maxMarks) g.maxMarks = r.marks;
+        g.count++;
+      }
+    }
+
+    cutoffResults = Array.from(groups.values());
+    
+    // Sort by cut-off marks descending
+    cutoffResults.sort((a, b) => b.minMarks - a.minMarks);
+
+    const ms = (performance.now() - t0).toFixed(1);
+    setStatus(`✅ Computed cut-offs for ${cutoffResults.length.toLocaleString()} groups in ${ms} ms.`, 'ok');
+
+    renderCutoffResults();
+  }
+
+  function renderCutoffResults() {
+    const area = document.getElementById('cutoffResultsArea');
+    const meta = document.getElementById('cutoffMeta');
+
+    if (cutoffResults.length === 0) {
+      meta.style.display = 'none';
+      setPlaceholder('cutoff', '❌', 'No records found matching these filters.');
+      return;
+    }
+
+    meta.style.display = 'block';
+    meta.textContent = `Showing ${cutoffResults.length.toLocaleString()} cut-off combinations. (Sorted by highest cut-off)`;
+
+    let html = `
+      <div class="table-wrapper">
+        <table class="cutoff-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>College</th>
+              <th>Course</th>
+              <th>Seat Type</th>
+              <th>Cut-off Mark (%)</th>
+              <th>Highest Mark (%)</th>
+              <th>Seats Filled</th>
+            </tr>
+          </thead>
+          <tbody>
+    `;
+
+    for (let i = 0; i < cutoffResults.length; i++) {
+      const c = cutoffResults[i];
+      html += `
+        <tr>
+          <td>${i + 1}</td>
+          <td class="col-college">
+            <strong>${c.collegeName}</strong>Code: ${c.collegeCode}
+            <br><a href="https://dse2026.mahacet.org.in/downloaddoc/cap${currentRound}/${c.collegeCode}_final.pdf" target="_blank" style="color:#0288d1; text-decoration:none; font-size:11px; margin-top:3px; display:inline-block;">📥 View Official PDF</a>
+          </td>
+          <td>${c.course || '—'}</td>
+          <td><span class="badge badge-seat">${c.seatType}</span></td>
+          <td class="col-marks">${c.minMarks.toFixed(2)}</td>
+          <td>${c.maxMarks.toFixed(2)}</td>
+          <td>${c.count}</td>
+        </tr>
+      `;
+    }
+
+    html += `</tbody></table></div>`;
+    area.innerHTML = html;
+  }
+
+
+  // ── RENDER SEARCH ─────────────────────────────────────────────────────────
+  function renderSearchResults() {
     const metaEl = document.getElementById('resultsMeta');
     const pagEl  = document.getElementById('pagination');
     const area   = document.getElementById('resultsArea');
@@ -434,7 +704,7 @@
     if (!filtered.length) {
       metaEl.style.display = 'none';
       pagEl.innerHTML = '';
-      setPlaceholder('❌', 'No records found. Try a different name or Application ID.');
+      setPlaceholder('search', '❌', 'No records found. Try a different name or Application ID.');
       return;
     }
 
@@ -451,9 +721,12 @@
       const gLabel = r.gender === 'M' ? 'Male' : 'Female';
       html += `
         <div class="result-card">
-          <div class="college-banner">
-            <div class="college-name">${r.collegeName}</div>
-            <div class="college-sub">College Code: ${r.collegeCode}</div>
+          <div class="college-banner" style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div class="college-name">${r.collegeName}</div>
+              <div class="college-sub">College Code: ${r.collegeCode}</div>
+            </div>
+            <a href="https://dse2026.mahacet.org.in/downloaddoc/cap${currentRound}/${r.collegeCode}_final.pdf" target="_blank" style="background:#fff; color:#1565c0; padding:6px 12px; border-radius:3px; text-decoration:none; font-size:12px; font-weight:bold; box-shadow:0 1px 2px rgba(0,0,0,0.2); white-space:nowrap; margin-left:10px;">📥 View Official PDF</a>
           </div>
           <div class="detail-grid">
             <div class="detail-item">
@@ -510,7 +783,7 @@
     const b = document.createElement('button');
     b.textContent = label;
     if (active) b.className = 'active';
-    b.onclick = () => { currentPage = page; renderResults(); window.scrollTo(0,0); };
+    b.onclick = () => { currentPage = page; renderSearchResults(); window.scrollTo(0,0); };
     document.getElementById('pagination').appendChild(b);
   }
   function addEl() {
@@ -524,8 +797,10 @@
     el.textContent = msg;
     el.className = 'status ' + (type || 'info');
   }
-  function setPlaceholder(icon, msg) {
-    document.getElementById('resultsArea').innerHTML =
+  
+  function setPlaceholder(view, icon, msg) {
+    const target = view === 'search' ? 'resultsArea' : 'cutoffResultsArea';
+    document.getElementById(target).innerHTML =
       `<div class="placeholder"><div class="icon">${icon}</div>${msg}</div>`;
   }
 
