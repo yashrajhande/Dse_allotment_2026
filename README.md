@@ -21,12 +21,5 @@ scraper/
   package.json
 ```
 
-## To add CAP Round II data (after 14 August 2026)
-```bash
-cd scraper
-node scrape.js --round=2
-```
-Then push `data/allotments_round2.json` to GitHub.
 
-## License
 Data is sourced from official MAHACET PDFs. This tool is unofficial.
