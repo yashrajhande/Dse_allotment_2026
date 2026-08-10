@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DSE 2026 — CAP Allotment Search</title>
+  <meta name="description" content="Search DSE 2026 Direct Second Year Engineering CAP Round allotment results by student name or Application ID." />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #eef2f7;
+      color: #222;
+      font-size: 14px;
+      min-height: 100vh;
+    }
+
+    /* ── TOP BAR ── */
+    .top-bar {
+      background: #1e293b;
+      color: #94a3b8;
+      font-size: 11px;
+      padding: 4px 24px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* ── HEADER ── */
+    .main-header {
+      background: #fff;
+      border-bottom: 3px solid #1565c0;
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .header-text h1 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1a237e;
+    }
+    .header-text p {
+      font-size: 12px;
+      color: #546e7a;
+      margin-top: 2px;
+    }
+    .header-right {
+      margin-left: auto;
+      font-size: 12px;
+      color: #1565c0;
+      font-weight: 600;
+      text-align: right;
+    }
+    .header-right small { font-weight: 400; color: #90a4ae; display: block; }
+
+    /* ── ROUND TABS ── */
+    .round-tabs {
+      background: #fff;
+      border-bottom: 1px solid #dce3f0;
+      padding: 0 24px;
+      display: flex;
+      gap: 0;
+    }
+    .round-tab {
+      padding: 10px 22px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #546e7a;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -1px;
+      user-select: none;
+    }
+    .round-tab:hover { color: #1565c0; background: #f5f8ff; }
+    .round-tab.active { color: #1565c0; border-bottom-color: #1565c0; }
+    .round-tab.disabled { color: #b0bec5; cursor: not-allowed; }
+    .round-tab .badge-coming {
+      font-size: 9px;
+      background: #fff3cd;
+      color: #c67700;
+      border: 1px solid #ffd54f;
+      border-radius: 2px;
+      padding: 1px 5px;
+      margin-left: 6px;
+      font-weight: 700;
+      vertical-align: middle;
+    }
+
+    /* ── WRAPPER ── */
+    .wrapper {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 20px 16px 40px;
+    }
+
+    /* ── SEARCH CARD ── */
+    .search-card {
+      background: #fff;
+      border: 1px solid #dce3f0;
+      border-radius: 4px;
+      padding: 16px 20px;
+      margin-bottom: 14px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .search-card label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: #37474f;
+      margin-bottom: 8px;
+    }
+    .search-row { display: flex; gap: 10px; align-items: center; }
+    #searchInput {
+      flex: 1;
+      padding: 9px 14px;
+      border: 1.5px solid #90a4ae;
+      border-radius: 3px;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+    }
+    #searchInput:focus { border-color: #1565c0; }
+    #clearBtn {
+      background: #eceff1;
+      color: #546e7a;
+      border: 1px solid #b0bec5;
+      border-radius: 3px;
+      padding: 8px 14px;
+      font-size: 13px;
+      cursor: pointer;
+      display: none;
+    }
+    #clearBtn:hover { background: #cfd8dc; }
+    .search-hint { margin-top: 6px; font-size: 11.5px; color: #78909c; }
+
+    /* ── STATUS ── */
+    .status {
+      font-size: 12.5px;
+      padding: 7px 12px;
+      border-radius: 3px;
+      margin-bottom: 12px;
+    }
+    .status.info  { background: #e3f2fd; border: 1px solid #90caf9; color: #1565c0; }
+    .status.ok    { background: #e8f5e9; border: 1px solid #a5d6a7; color: #2e7d32; }
+    .status.error { background: #ffebee; border: 1px solid #ef9a9a; color: #c62828; }
+    .status.wait  { background: #fff8e1; border: 1px solid #ffe082; color: #c67700; }
+
+    /* ── RESULTS META ── */
+    .results-meta { font-size: 12.5px; color: #546e7a; margin-bottom: 10px; }
+
+    /* ── RESULT CARD ── */
+    .result-card {
+      background: #fff;
+      border: 1px solid #dce3f0;
+      border-radius: 4px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      overflow: hidden;
+    }
+    .college-banner {
+      background: #1565c0;
+      color: #fff;
+      padding: 12px 18px;
+    }
+    .college-banner .college-name {
+      font-size: 17px;
+      font-weight: 700;
+    }
+    .college-banner .college-sub {
+      font-size: 12px;
+      color: #bbdefb;
+      margin-top: 2px;
+    }
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      padding: 14px 18px;
+      gap: 4px 0;
+    }
+    .detail-item { padding: 5px 10px 5px 0; }
+    .detail-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #90a4ae;
+      margin-bottom: 2px;
+    }
+    .detail-value {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #1a237e;
+    }
+    .detail-value.name-val { font-size: 15px; color: #0d47a1; }
+    .badge {
+      display: inline-block;
+      padding: 2px 9px;
+      border-radius: 2px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .badge-M { background: #e3f2fd; color: #0d47a1; }
+    .badge-F { background: #fce4ec; color: #880e4f; }
+    .badge-seat { background: #fff8e1; color: #e65100; border: 1px solid #ffe082; }
+    .course-row {
+      border-top: 1px solid #f0f4f8;
+      padding: 8px 18px;
+      font-size: 12.5px;
+      color: #546e7a;
+    }
+    .course-row strong { color: #1a237e; }
+
+    /* ── PAGINATION ── */
+    .pagination { margin-top: 14px; display: flex; gap: 4px; flex-wrap: wrap; }
+    .pagination button {
+      padding: 5px 12px;
+      border: 1px solid #90a4ae;
+      background: #fff;
+      color: #37474f;
+      cursor: pointer;
+      font-size: 13px;
+      border-radius: 2px;
+    }
+    .pagination button.active { background: #1565c0; color: #fff; border-color: #1565c0; }
+    .pagination button:hover:not(.active) { background: #e3f2fd; }
+    .ellipsis { padding: 5px 4px; color: #90a4ae; }
+
+    /* ── PLACEHOLDER ── */
+    .placeholder {
+      background: #fff;
+      border: 1px solid #dce3f0;
+      border-radius: 4px;
+      text-align: center;
+      padding: 36px 20px;
+      color: #90a4ae;
+      font-size: 14px;
+    }
+    .placeholder .icon { font-size: 36px; margin-bottom: 10px; }
+
+    /* ── FOOTER ── */
+    .footer {
+      background: #1e293b;
+      color: #94a3b8;
+      text-align: center;
+      padding: 12px;
+      font-size: 11.5px;
+      margin-top: 20px;
+    }
+    .footer a { color: #90caf9; }
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <span>State Common Entrance Test Cell, Maharashtra State</span>
+  <span>DSE 2026-27 | Unofficial Search Tool</span>
+</div>
+
+<!-- HEADER -->
+<div class="main-header">
+  <div style="font-size:36px">🏛️</div>
+  <div class="header-text">
+    <h1>DSE 2026 — CAP Allotment Result Search</h1>
+    <p>Direct Second Year Engineering | Institute-Wise Allotment List</p>
+  </div>
+  <div class="header-right">
+    Academic Year 2026-27
+    <small>Data: MAHACET Official PDFs</small>
+  </div>
+</div>
+
+<!-- ROUND TABS -->
+<div class="round-tabs">
+  <div class="round-tab active" id="tab-1" onclick="switchRound(1)">CAP Round I</div>
+  <div class="round-tab disabled" id="tab-2">
+    CAP Round II <span class="badge-coming">Results: 14 Aug</span>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="wrapper">
+
+  <!-- SEARCH -->
+  <div class="search-card">
+    <label for="searchInput" id="searchLabel">Search in CAP Round I — By Student Name or Application ID</label>
+    <div class="search-row">
+      <input type="text" id="searchInput"
+             placeholder="Start typing a name or enter DSE26XXXXXX..."
+             autocomplete="off" spellcheck="false" />
+      <button id="clearBtn" onclick="clearSearch()">✕ Clear</button>
+    </div>
+    <div class="search-hint">
+      Results appear instantly as you type. Min. 2 characters. App ID format: <strong>DSE26XXXXXX</strong>
+    </div>
+  </div>
+
+  <!-- STATUS -->
+  <div class="status info" id="statusBar">⏳ Loading CAP Round I data...</div>
+
+  <!-- RESULTS -->
+  <div class="results-meta" id="resultsMeta" style="display:none"></div>
+  <div id="resultsArea">
+    <div class="placeholder"><div class="icon">🔍</div>Loading data...</div>
+  </div>
+  <div class="pagination" id="pagination"></div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  Data sourced from official MAHACET CAP allotment PDFs &nbsp;|&nbsp;
+  Unofficial search tool — for official information visit
+  <a href="https://dse2026.mahacet.org.in" target="_blank">dse2026.mahacet.org.in</a>
+  &nbsp;|&nbsp;
+  <a href="https://mahacet.org.in" target="_blank">mahacet.org.in</a>
+</div>
+
+<script>
+  // ── STATE ─────────────────────────────────────────────────────────────────
+  let currentRound   = 1;
+  let rounds         = { 1: null, 2: null };   // null = not loaded, [] = loaded data
+  let nameIndexes    = { 1: [], 2: [] };
+  let idIndexes      = { 1: [], 2: [] };
+  let filtered       = [];
+  let currentPage    = 1;
+  const PAGE_SIZE    = 20;
+  let debounceTimer  = null;
+
+  // ── ROUND SWITCH ──────────────────────────────────────────────────────────
+  function switchRound(round) {
+    // Don't switch to a disabled round
+    if (document.getElementById('tab-' + round).classList.contains('disabled')) return;
+
+    currentRound = round;
+    document.querySelectorAll('.round-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + round).classList.add('active');
+    document.getElementById('searchLabel').textContent =
+      `Search in CAP Round ${round === 1 ? 'I' : 'II'} — By Student Name or Application ID`;
+
+    clearSearch();
+
+    if (rounds[round] === null) {
+      loadRound(round);
+    } else {
+      const n = rounds[round].length;
+      const c = new Set(rounds[round].map(d => d.collegeCode)).size;
+      setStatus(`✅ ${n.toLocaleString()} records from ${c} colleges loaded. Start typing to search.`, 'ok');
+      setPlaceholder('🔍', 'Start typing a student name or Application ID above.');
+    }
+  }
+
+  // ── LOAD DATA ─────────────────────────────────────────────────────────────
+  function loadRound(round) {
+    setStatus(`⏳ Loading CAP Round ${round === 1 ? 'I' : 'II'} data...`, 'info');
+    setPlaceholder('⏳', 'Loading allotment data, please wait...');
+
+    fetch(`data/allotments_round${round}.json`)
+      .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(data => {
+        rounds[round] = data;
+        nameIndexes[round] = data.map(r => r.name.toUpperCase());
+        idIndexes[round]   = data.map(r => r.appId.toUpperCase());
+        const colleges = new Set(data.map(d => d.collegeCode)).size;
+        setStatus(`✅ ${data.length.toLocaleString()} records from ${colleges} colleges loaded. Start typing to search.`, 'ok');
+        setPlaceholder('🔍', 'Start typing a student name or Application ID above to see results instantly.');
+        document.getElementById('searchInput').focus();
+      })
+      .catch(err => {
+        rounds[round] = [];
+        setStatus(`❌ Could not load Round ${round} data. ${err.message}. Make sure you are running this via a local server (http://localhost:8000).`, 'error');
+      });
+  }
+
+  // ── LIVE SEARCH ───────────────────────────────────────────────────────────
+  document.getElementById('searchInput').addEventListener('input', () => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(runSearch, 150);
+  });
+
+  function runSearch() {
+    const raw  = document.getElementById('searchInput').value;
+    const q    = raw.trim().toUpperCase();
+    const data = rounds[currentRound];
+
+    document.getElementById('clearBtn').style.display = raw.length ? 'inline-block' : 'none';
+
+    if (!data || !data.length) return;
+
+    if (q.length < 2) {
+      filtered = [];
+      document.getElementById('resultsMeta').style.display = 'none';
+      document.getElementById('pagination').innerHTML = '';
+      setPlaceholder(q.length === 0 ? '🔍' : '⚠️',
+        q.length === 0
+          ? 'Start typing a student name or Application ID above.'
+          : 'Type at least 2 characters to search.');
+      return;
+    }
+
+    const t0 = performance.now();
+    filtered = [];
+    const ni = nameIndexes[currentRound];
+    const ii = idIndexes[currentRound];
+    for (let i = 0; i < data.length; i++) {
+      if (ni[i].includes(q) || ii[i].includes(q)) filtered.push(data[i]);
+    }
+    const ms = (performance.now() - t0).toFixed(1);
+    setStatus(`✅ Found ${filtered.length.toLocaleString()} record(s) in ${ms} ms.`, 'ok');
+
+    currentPage = 1;
+    renderResults();
+  }
+
+  function clearSearch() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('clearBtn').style.display = 'none';
+    filtered = [];
+    document.getElementById('resultsMeta').style.display = 'none';
+    document.getElementById('pagination').innerHTML = '';
+    const data = rounds[currentRound];
+    if (data && data.length) {
+      setPlaceholder('🔍', 'Start typing a student name or Application ID above.');
+    }
+    document.getElementById('searchInput').focus();
+  }
+
+  // ── RENDER ────────────────────────────────────────────────────────────────
+  function renderResults() {
+    const metaEl = document.getElementById('resultsMeta');
+    const pagEl  = document.getElementById('pagination');
+    const area   = document.getElementById('resultsArea');
+
+    if (!filtered.length) {
+      metaEl.style.display = 'none';
+      pagEl.innerHTML = '';
+      setPlaceholder('❌', 'No records found. Try a different name or Application ID.');
+      return;
+    }
+
+    const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+    const start = (currentPage - 1) * PAGE_SIZE;
+    const end   = Math.min(start + PAGE_SIZE, filtered.length);
+    const page  = filtered.slice(start, end);
+
+    metaEl.style.display = 'block';
+    metaEl.textContent   = `Showing ${start + 1}–${end} of ${filtered.length.toLocaleString()} results`;
+
+    let html = '';
+    for (const r of page) {
+      const gLabel = r.gender === 'M' ? 'Male' : 'Female';
+      html += `
+        <div class="result-card">
+          <div class="college-banner">
+            <div class="college-name">${r.collegeName}</div>
+            <div class="college-sub">College Code: ${r.collegeCode}</div>
+          </div>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <div class="detail-label">Student Name</div>
+              <div class="detail-value name-val">${r.name}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Application ID</div>
+              <div class="detail-value">${r.appId}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Merit Score</div>
+              <div class="detail-value">${r.marks}%</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Merit No.</div>
+              <div class="detail-value">${r.meritNo}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Gender</div>
+              <div class="detail-value"><span class="badge badge-${r.gender}">${gLabel}</span></div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Category</div>
+              <div class="detail-value">${r.category || '—'}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Seat Type</div>
+              <div class="detail-value"><span class="badge badge-seat">${r.seatType}</span></div>
+            </div>
+          </div>
+          <div class="course-row">
+            📚 Course: <strong>${r.course || '—'}</strong>
+            ${r.section ? ` &nbsp;|&nbsp; Section: <strong>${r.section}</strong>` : ''}
+          </div>
+        </div>`;
+    }
+    area.innerHTML = html;
+
+    // Pagination
+    pagEl.innerHTML = '';
+    if (totalPages > 1) {
+      const lo = Math.max(1, currentPage - 3);
+      const hi = Math.min(totalPages, currentPage + 3);
+      if (currentPage > 1) addPageBtn('« Prev', currentPage - 1);
+      if (lo > 1) { addPageBtn('1', 1); if (lo > 2) addEl(); }
+      for (let p = lo; p <= hi; p++) addPageBtn(p, p, p === currentPage);
+      if (hi < totalPages) { if (hi < totalPages-1) addEl(); addPageBtn(totalPages, totalPages); }
+      if (currentPage < totalPages) addPageBtn('Next »', currentPage + 1);
+    }
+  }
+
+  function addPageBtn(label, page, active) {
+    const b = document.createElement('button');
+    b.textContent = label;
+    if (active) b.className = 'active';
+    b.onclick = () => { currentPage = page; renderResults(); window.scrollTo(0,0); };
+    document.getElementById('pagination').appendChild(b);
+  }
+  function addEl() {
+    const s = document.createElement('span');
+    s.className = 'ellipsis'; s.textContent = '…';
+    document.getElementById('pagination').appendChild(s);
+  }
+
+  function setStatus(msg, type) {
+    const el = document.getElementById('statusBar');
+    el.textContent = msg;
+    el.className = 'status ' + (type || 'info');
+  }
+  function setPlaceholder(icon, msg) {
+    document.getElementById('resultsArea').innerHTML =
+      `<div class="placeholder"><div class="icon">${icon}</div>${msg}</div>`;
+  }
+
+  // ── INIT ──────────────────────────────────────────────────────────────────
+  loadRound(1);
+</script>
+</body>
+</html>

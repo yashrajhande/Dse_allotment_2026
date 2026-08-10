@@ -1,0 +1,12 @@
+{
+  "name": "dse-allotment-scraper",
+  "version": "1.0.0",
+  "description": "Scraper for DSE 2026 CAP Round 1 allotment PDFs",
+  "main": "scrape.js",
+  "scripts": {
+    "scrape": "node scrape.js"
+  },
+  "dependencies": {
+    "pdf-parse": "^1.1.1"
+  }
+}
