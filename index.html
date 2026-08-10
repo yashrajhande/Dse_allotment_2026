@@ -711,6 +711,13 @@
     const filterCourse = document.getElementById('cutoffCourse').value;
     const filterSeat = document.getElementById('cutoffSeatType').value;
 
+    if (!filterCol && !filterCourse && !filterSeat) {
+      setPlaceholder('cutoff', '📊', 'Please select at least one filter (College, Course, or Seat Type) to analyze cut-offs.');
+      document.getElementById('cutoffMeta').style.display = 'none';
+      cutoffResults = [];
+      return;
+    }
+
     const t0 = performance.now();
     const groups = new Map();
 
@@ -744,13 +751,19 @@
     // Sort by cut-off marks descending
     cutoffResults.sort((a, b) => b.minMarks - a.minMarks);
 
-    const ms = (performance.now() - t0).toFixed(1);
-    setStatus(`✅ Computed cut-offs for ${cutoffResults.length.toLocaleString()} groups in ${ms} ms.`, 'ok');
+    let displayLimitMsg = '';
+    if (cutoffResults.length > 1000) {
+      displayLimitMsg = ` (Showing top 1,000 of ${cutoffResults.length.toLocaleString()})`;
+      cutoffResults = cutoffResults.slice(0, 1000);
+    }
 
-    renderCutoffResults();
+    const ms = (performance.now() - t0).toFixed(1);
+    setStatus(`✅ Computed cut-offs for ${groups.size.toLocaleString()} combinations in ${ms} ms.`, 'ok');
+
+    renderCutoffResults(displayLimitMsg);
   }
 
-  function renderCutoffResults() {
+  function renderCutoffResults(limitMsg = '') {
     const area = document.getElementById('cutoffResultsArea');
     const meta = document.getElementById('cutoffMeta');
 
@@ -761,7 +774,7 @@
     }
 
     meta.style.display = 'block';
-    meta.textContent = `Showing ${cutoffResults.length.toLocaleString()} cut-off combinations. (Sorted by highest cut-off)`;
+    meta.textContent = `Showing ${cutoffResults.length.toLocaleString()} cut-off combinations. (Sorted by highest cut-off)${limitMsg}`;
 
     let html = `
       <div class="table-wrapper">
