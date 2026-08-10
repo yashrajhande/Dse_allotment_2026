@@ -18,41 +18,42 @@
 
     /* ── TOP BAR ── */
     .top-bar {
-      background: #1e293b;
-      color: #94a3b8;
+      background: #ffffff;
+      color: #555;
       font-size: 11px;
-      padding: 4px 24px;
+      padding: 6px 24px;
       display: flex;
       justify-content: space-between;
+      border-bottom: 1px solid #eaeaea;
     }
 
     /* ── HEADER ── */
     .main-header {
       background: #fff;
-      border-bottom: 3px solid #1565c0;
-      padding: 10px 24px;
+      padding: 15px 24px;
       display: flex;
       align-items: center;
       gap: 14px;
+      border-bottom: 1px solid #eaeaea;
     }
     .header-text h1 {
-      font-size: 15px;
+      font-size: 18px;
       font-weight: 700;
-      color: #1a237e;
+      color: #222;
     }
     .header-text p {
-      font-size: 12px;
-      color: #546e7a;
-      margin-top: 2px;
+      font-size: 13px;
+      color: #555;
+      margin-top: 4px;
     }
     .header-right {
       margin-left: auto;
       font-size: 12px;
-      color: #1565c0;
+      color: #333;
       font-weight: 600;
       text-align: right;
     }
-    .header-right small { font-weight: 400; color: #90a4ae; display: block; }
+    .header-right small { font-weight: 400; color: #777; display: block; }
 
     /* ── TABS ── */
     .tabs-container {
@@ -77,16 +78,17 @@
       margin-bottom: -1px;
       user-select: none;
     }
-    .tab:hover { color: #1565c0; background: #f5f8ff; }
-    .tab.active { color: #1565c0; border-bottom-color: #1565c0; }
+    .tab:hover { color: #14a2a8; background: #e6f6f7; }
+    .tab.active { color: #14a2a8; border-bottom-color: #14a2a8; }
     .tab.disabled { color: #b0bec5; cursor: not-allowed; }
     
     .view-tabs .tab {
-      color: #0288d1;
+      color: #555;
     }
     .view-tabs .tab.active {
-      color: #01579b;
-      border-bottom-color: #0288d1;
+      color: #14a2a8;
+      border-bottom-color: #14a2a8;
+      background: #e6f6f7;
     }
 
     .badge-coming {
@@ -136,7 +138,7 @@
       font-family: inherit;
       outline: none;
     }
-    #searchInput:focus { border-color: #1565c0; }
+    #searchInput:focus { border-color: #14a2a8; }
     #clearBtn {
       background: #eceff1;
       color: #546e7a;
@@ -173,7 +175,7 @@
       outline: none;
       background: #fff;
     }
-    .filter-group select:focus { border-color: #0288d1; }
+    .filter-group select:focus { border-color: #14a2a8; }
 
     /* ── STATUS ── */
     .status {
@@ -182,7 +184,7 @@
       border-radius: 3px;
       margin-bottom: 12px;
     }
-    .status.info  { background: #e3f2fd; border: 1px solid #90caf9; color: #1565c0; }
+    .status.info  { background: #e6f6f7; border: 1px solid #b2e4e6; color: #10868b; }
     .status.ok    { background: #e8f5e9; border: 1px solid #a5d6a7; color: #2e7d32; }
     .status.error { background: #ffebee; border: 1px solid #ef9a9a; color: #c62828; }
     .status.wait  { background: #fff8e1; border: 1px solid #ffe082; color: #c67700; }
@@ -200,12 +202,12 @@
       overflow: hidden;
     }
     .college-banner {
-      background: #1565c0;
+      background: #14a2a8;
       color: #fff;
       padding: 12px 18px;
     }
-    .college-banner .college-name { font-size: 17px; font-weight: 700; }
-    .college-banner .college-sub { font-size: 12px; color: #bbdefb; margin-top: 2px; }
+    .college-banner .college-name { font-size: 16px; font-weight: 700; }
+    .college-banner .college-sub { font-size: 12px; color: #ccf1f2; margin-top: 2px; }
     .detail-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -220,8 +222,8 @@
       color: #90a4ae;
       margin-bottom: 2px;
     }
-    .detail-value { font-size: 13.5px; font-weight: 700; color: #1a237e; }
-    .detail-value.name-val { font-size: 15px; color: #0d47a1; }
+    .detail-value { font-size: 13.5px; font-weight: 700; color: #222; }
+    .detail-value.name-val { font-size: 15px; color: #14a2a8; }
     
     .badge {
       display: inline-block;
@@ -230,7 +232,7 @@
       font-size: 11px;
       font-weight: 700;
     }
-    .badge-M { background: #e3f2fd; color: #0d47a1; }
+    .badge-M { background: #f0f0f0; color: #444; }
     .badge-F { background: #fce4ec; color: #880e4f; }
     .badge-seat { background: #fff8e1; color: #e65100; border: 1px solid #ffe082; }
     
@@ -240,7 +242,7 @@
       font-size: 12.5px;
       color: #546e7a;
     }
-    .course-row strong { color: #1a237e; }
+    .course-row strong { color: #14a2a8; }
 
     /* ── CUTOFF TABLE ── */
     .table-wrapper {
@@ -264,15 +266,15 @@
       white-space: nowrap;
     }
     table.cutoff-table tbody tr { border-bottom: 1px solid #eceff1; }
-    table.cutoff-table tbody tr:hover { background: #f5f8ff; }
-    table.cutoff-table td { padding: 9px 12px; color: #1a237e; }
+    table.cutoff-table tbody tr:hover { background: #e6f6f7; }
+    table.cutoff-table td { padding: 9px 12px; color: #222; }
     table.cutoff-table td.col-marks {
       font-weight: 700;
-      color: #c62828;
+      color: #14a2a8;
       font-size: 14px;
     }
-    table.cutoff-table td.col-college { color: #546e7a; }
-    table.cutoff-table td.col-college strong { color: #1565c0; display: block; margin-bottom: 2px; }
+    table.cutoff-table td.col-college { color: #444; }
+    table.cutoff-table td.col-college strong { color: #222; display: block; margin-bottom: 2px; }
 
     /* ── PAGINATION ── */
     .pagination { margin-top: 14px; display: flex; gap: 4px; flex-wrap: wrap; }
@@ -285,8 +287,8 @@
       font-size: 13px;
       border-radius: 2px;
     }
-    .pagination button.active { background: #1565c0; color: #fff; border-color: #1565c0; }
-    .pagination button:hover:not(.active) { background: #e3f2fd; }
+    .pagination button.active { background: #14a2a8; color: #fff; border-color: #14a2a8; }
+    .pagination button:hover:not(.active) { background: #e6f6f7; }
     .ellipsis { padding: 5px 4px; color: #90a4ae; }
 
     /* ── PLACEHOLDER ── */
@@ -303,14 +305,16 @@
 
     /* ── FOOTER ── */
     .footer {
-      background: #1e293b;
-      color: #94a3b8;
+      background: #f8f9fa;
+      color: #555;
       text-align: center;
-      padding: 12px;
-      font-size: 11.5px;
+      padding: 16px;
+      font-size: 12px;
       margin-top: 20px;
+      border-top: 1px solid #eaeaea;
     }
-    .footer a { color: #90caf9; }
+    .footer a { color: #14a2a8; text-decoration: none; font-weight: 600; }
+    .footer a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -679,7 +683,7 @@
           <td>${i + 1}</td>
           <td class="col-college">
             <strong>${c.collegeName}</strong>Code: ${c.collegeCode}
-            <br><a href="https://dse2026.mahacet.org.in/downloaddoc/cap${currentRound}/${c.collegeCode}_final.pdf" target="_blank" style="color:#0288d1; text-decoration:none; font-size:11px; margin-top:3px; display:inline-block;">📥 View Official PDF</a>
+            <br><a href="https://dse2026.mahacet.org.in/downloaddoc/cap${currentRound}/${c.collegeCode}_final.pdf" target="_blank" style="color:#14a2a8; text-decoration:none; font-size:11px; margin-top:3px; display:inline-block; font-weight:600;">📥 View Official PDF</a>
           </td>
           <td>${c.course || '—'}</td>
           <td><span class="badge badge-seat">${c.seatType}</span></td>
@@ -726,7 +730,7 @@
               <div class="college-name">${r.collegeName}</div>
               <div class="college-sub">College Code: ${r.collegeCode}</div>
             </div>
-            <a href="https://dse2026.mahacet.org.in/downloaddoc/cap${currentRound}/${r.collegeCode}_final.pdf" target="_blank" style="background:#fff; color:#1565c0; padding:6px 12px; border-radius:3px; text-decoration:none; font-size:12px; font-weight:bold; box-shadow:0 1px 2px rgba(0,0,0,0.2); white-space:nowrap; margin-left:10px;">📥 View Official PDF</a>
+            <a href="https://dse2026.mahacet.org.in/downloaddoc/cap${currentRound}/${r.collegeCode}_final.pdf" target="_blank" style="background:#fff; color:#14a2a8; padding:6px 12px; border-radius:3px; text-decoration:none; font-size:12px; font-weight:bold; box-shadow:0 1px 2px rgba(0,0,0,0.2); white-space:nowrap; margin-left:10px;">📥 View Official PDF</a>
           </div>
           <div class="detail-grid">
             <div class="detail-item">
