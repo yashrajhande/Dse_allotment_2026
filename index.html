@@ -303,6 +303,83 @@
     }
     .placeholder .icon { font-size: 36px; margin-bottom: 10px; }
 
+    /* ── TOP COLLEGES ── */
+    .top-desc {
+      background: #fff;
+      border: 1px solid #dce3f0;
+      border-radius: 4px;
+      padding: 14px 20px;
+      margin-bottom: 14px;
+      font-size: 13px;
+      color: #555;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .top-desc strong { color: #14a2a8; }
+    .rank-card {
+      background: #fff;
+      border: 1px solid #dce3f0;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: stretch;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .rank-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 60px;
+      font-size: 22px;
+      font-weight: 800;
+      color: #fff;
+      background: #14a2a8;
+    }
+    .rank-badge.gold   { background: #f59e0b; }
+    .rank-badge.silver { background: #94a3b8; }
+    .rank-badge.bronze { background: #d97706; }
+    .rank-info {
+      flex: 1;
+      padding: 12px 18px;
+    }
+    .rank-info .rank-college {
+      font-size: 15px;
+      font-weight: 700;
+      color: #222;
+      margin-bottom: 3px;
+    }
+    .rank-info .rank-sub {
+      font-size: 12px;
+      color: #777;
+    }
+    .rank-info .rank-sub a {
+      color: #14a2a8;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .rank-info .rank-sub a:hover { text-decoration: underline; }
+    .rank-cutoff {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 20px;
+      border-left: 1px solid #f0f4f8;
+      min-width: 120px;
+    }
+    .rank-cutoff .cutoff-val {
+      font-size: 22px;
+      font-weight: 800;
+      color: #14a2a8;
+    }
+    .rank-cutoff .cutoff-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #90a4ae;
+      margin-top: 2px;
+    }
+
     /* ── FOOTER ── */
     .footer {
       background: #f8f9fa;
@@ -349,6 +426,7 @@
   <div class="view-tabs">
     <div class="tab active" id="viewTab-search" onclick="switchView('search')">Student Search</div>
     <div class="tab" id="viewTab-cutoff" onclick="switchView('cutoff')">Cut-off Analyzer</div>
+    <div class="tab" id="viewTab-top15" onclick="switchView('top15')">Top 15 Colleges</div>
   </div>
 </div>
 
@@ -414,6 +492,26 @@
     </div>
   </div>
 
+
+  <!-- ==================== TOP 15 COLLEGES VIEW ==================== -->
+  <div id="top15View" style="display:none">
+    <div class="search-card">
+      <label class="main-label" id="top15Label">🏆 Top 15 Colleges in Maharashtra — Based on CAP Round I Cut-offs</label>
+      <div class="filters-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+        <div class="filter-group">
+          <label for="top15SeatType">Select Category (Seat Type)</label>
+          <select id="top15SeatType" onchange="computeTop15()">
+            <option value="GOPEN">GOPEN (General Open)</option>
+          </select>
+        </div>
+      </div>
+      <div class="search-hint">Rankings are based on the highest GOPEN cut-off mark across all branches in each college from CAP Round I allotment data.</div>
+    </div>
+    <div id="top15ResultsArea">
+      <div class="placeholder"><div class="icon">🏆</div>Loading data...</div>
+    </div>
+  </div>
+
 </div>
 
 <!-- FOOTER -->
@@ -452,6 +550,7 @@
     
     document.getElementById('searchLabel').textContent = `Search Students — CAP Round ${round === 1 ? 'I' : 'II'}`;
     document.getElementById('cutoffLabel').textContent = `Cut-off Analyzer — CAP Round ${round === 1 ? 'I' : 'II'}`;
+    document.getElementById('top15Label').textContent  = `🏆 Top 15 Colleges in Maharashtra — Based on CAP Round ${round === 1 ? 'I' : 'II'} Cut-offs`;
 
     clearSearch();
 
@@ -468,12 +567,17 @@
     document.querySelectorAll('.view-tabs .tab').forEach(t => t.classList.remove('active'));
     document.getElementById('viewTab-' + view).classList.add('active');
 
-    document.getElementById('searchView').style.display = view === 'search' ? 'block' : 'none';
-    document.getElementById('cutoffView').style.display = view === 'cutoff' ? 'block' : 'none';
+    document.getElementById('searchView').style.display  = view === 'search' ? 'block' : 'none';
+    document.getElementById('cutoffView').style.display   = view === 'cutoff' ? 'block' : 'none';
+    document.getElementById('top15View').style.display     = view === 'top15'  ? 'block' : 'none';
 
     if (view === 'cutoff' && rounds[currentRound]) {
       populateDropdowns();
       calculateCutoffs();
+    }
+    if (view === 'top15' && rounds[currentRound]) {
+      populateTop15Dropdown();
+      computeTop15();
     }
   }
 
@@ -806,6 +910,147 @@
     const target = view === 'search' ? 'resultsArea' : 'cutoffResultsArea';
     document.getElementById(target).innerHTML =
       `<div class="placeholder"><div class="icon">${icon}</div>${msg}</div>`;
+  }
+
+  // ── TOP 15 COLLEGES ────────────────────────────────────────────────────────
+  let top15DropdownPopulated = null;
+
+  function populateTop15Dropdown() {
+    if (top15DropdownPopulated === currentRound) return;
+    const data = rounds[currentRound];
+    if (!data || !data.length) return;
+
+    const seatTypes = new Set();
+    data.forEach(r => { if (r.seatType) seatTypes.add(r.seatType); });
+
+    const select = document.getElementById('top15SeatType');
+    const val = select.value;
+    select.innerHTML = '';
+    Array.from(seatTypes).sort().forEach(st => {
+      const opt = document.createElement('option');
+      opt.value = st;
+      opt.textContent = st;
+      select.appendChild(opt);
+    });
+    // Default to GOPEN if available
+    if (seatTypes.has('GOPEN')) select.value = 'GOPEN';
+    else if (val && seatTypes.has(val)) select.value = val;
+
+    top15DropdownPopulated = currentRound;
+  }
+
+  function computeTop15() {
+    const data = rounds[currentRound];
+    if (!data || !data.length) return;
+
+    const seatType = document.getElementById('top15SeatType').value;
+
+    // Update hint text
+    const hintEl = document.querySelector('#top15View .search-hint');
+    if (hintEl) hintEl.textContent = `Rankings are based on the highest ${seatType} cut-off mark across all branches in each college from CAP Round ${currentRound === 1 ? 'I' : 'II'} allotment data.`;
+
+    // Step 1: For each college, find the HIGHEST cutoff (i.e. the minimum mark
+    // in the branch that had the highest minimum mark) for the selected seat type.
+    //
+    // Logic:
+    //   - Group records by (collegeCode, course) where seatType matches
+    //   - For each group, the "cutoff" = the minimum marks in that group
+    //   - For each college, the "best cutoff" = the maximum of those per-branch cutoffs
+    //   - This answers: "What is the hardest branch to get into at this college?"
+
+    const branchGroups = new Map(); // key: "collegeCode|course" -> { min, max, count, collegeName, collegeCode, course }
+
+    for (let i = 0; i < data.length; i++) {
+      const r = data[i];
+      if (r.seatType !== seatType) continue;
+      if (!r.course) continue;
+
+      const key = `${r.collegeCode}|${r.course}`;
+      if (!branchGroups.has(key)) {
+        branchGroups.set(key, {
+          collegeCode: r.collegeCode,
+          collegeName: r.collegeName,
+          course: r.course,
+          minMarks: r.marks,
+          maxMarks: r.marks,
+          count: 1
+        });
+      } else {
+        const g = branchGroups.get(key);
+        if (r.marks < g.minMarks) g.minMarks = r.marks;
+        if (r.marks > g.maxMarks) g.maxMarks = r.marks;
+        g.count++;
+      }
+    }
+
+    // Step 2: For each college, find the branch with the highest cutoff
+    const collegeMap = new Map(); // key: collegeCode -> { highestCutoff, bestBranch, collegeName, totalSeats }
+    for (const g of branchGroups.values()) {
+      const existing = collegeMap.get(g.collegeCode);
+      if (!existing) {
+        collegeMap.set(g.collegeCode, {
+          collegeCode: g.collegeCode,
+          collegeName: g.collegeName,
+          highestCutoff: g.minMarks,
+          bestBranch: g.course,
+          totalSeats: g.count,
+          branchCount: 1
+        });
+      } else {
+        existing.totalSeats += g.count;
+        existing.branchCount++;
+        if (g.minMarks > existing.highestCutoff) {
+          existing.highestCutoff = g.minMarks;
+          existing.bestBranch = g.course;
+        }
+      }
+    }
+
+    // Step 3: Sort by highest cutoff descending, take top 15
+    const ranked = Array.from(collegeMap.values())
+      .sort((a, b) => b.highestCutoff - a.highestCutoff)
+      .slice(0, 15);
+
+    // Render
+    const area = document.getElementById('top15ResultsArea');
+    if (ranked.length === 0) {
+      area.innerHTML = `<div class="placeholder"><div class="icon">❌</div>No data found for seat type "${seatType}".</div>`;
+      return;
+    }
+
+    const medals = ['🥇', '🥈', '🥉'];
+    const badgeClasses = ['gold', 'silver', 'bronze'];
+
+    let html = '';
+    for (let i = 0; i < ranked.length; i++) {
+      const c = ranked[i];
+      const medal = i < 3 ? medals[i] : '';
+      const badgeCls = i < 3 ? badgeClasses[i] : '';
+      const displayRank = medal ? medal : `#${i + 1}`;
+      const pdfUrl = `https://dse2026.mahacet.org.in/downloaddoc/cap${currentRound}/${c.collegeCode}_final.pdf`;
+
+      html += `
+        <div class="rank-card">
+          <div class="rank-badge ${badgeCls}">${displayRank}</div>
+          <div class="rank-info">
+            <div class="rank-college">${c.collegeName}</div>
+            <div class="rank-sub">
+              Code: ${c.collegeCode} &nbsp;|&nbsp;
+              Top Branch (${seatType}): <strong>${c.bestBranch}</strong> &nbsp;|&nbsp;
+              ${c.branchCount} branches, ${c.totalSeats} ${seatType} seats filled &nbsp;|&nbsp;
+              <a href="${pdfUrl}" target="_blank">📥 View Official PDF</a>
+            </div>
+          </div>
+          <div class="rank-cutoff">
+            <div class="cutoff-val">${c.highestCutoff.toFixed(2)}%</div>
+            <div class="cutoff-label">Highest Cut-off</div>
+          </div>
+        </div>
+      `;
+    }
+
+    area.innerHTML = html;
+    setStatus(`🏆 Top 15 colleges ranked by highest ${seatType} cut-off.`, 'ok');
   }
 
   // ── INIT ──────────────────────────────────────────────────────────────────
