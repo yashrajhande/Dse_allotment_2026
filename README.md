@@ -2,7 +2,7 @@
 
 Unofficial search tool for DSE 2026 CAP Round allotment results. Search by student name or Application ID across all colleges in Maharashtra.
 
-**Live site:** https://YOUR-USERNAME.github.io/dse-allotment-search/
+**Live site:** https://yashrajhande.github.io/dse-allotment-search/
 
 ## Features
 - Instant live search (results appear as you type)
