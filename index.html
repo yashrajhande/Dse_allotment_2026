@@ -1,156 +1,370 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DSE 2026 — CAP Allotment Search & Cut-offs</title>
   <meta name="description" content="Search DSE 2026 Direct Second Year Engineering CAP Round allotment results and calculate cut-offs." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
+    /* ── CSS VARIABLES / THEMES ── */
+    :root {
+      --accent:       #14a2a8;
+      --accent-light: #e6f6f7;
+      --accent-dark:  #0d7377;
+
+      /* Light theme */
+      --bg:           #eef2f7;
+      --surface:      #ffffff;
+      --surface2:     #f8f9fa;
+      --border:       #dce3f0;
+      --border2:      #eaeaea;
+      --text:         #1a1a2e;
+      --text2:        #546e7a;
+      --text3:        #90a4ae;
+      --shadow:       rgba(0,0,0,0.06);
+      --shadow2:      rgba(0,0,0,0.05);
+      --input-bg:     #ffffff;
+      --hover-row:    #e6f6f7;
+      --badge-seat-bg:#fff8e1;
+      --badge-seat-c: #e65100;
+      --badge-seat-br:#ffe082;
+      --badge-M-bg:   #f0f0f0;
+      --badge-M-c:    #444;
+      --badge-F-bg:   #fce4ec;
+      --badge-F-c:    #880e4f;
+      --tab-hover-bg: #e6f6f7;
+      --clear-bg:     #eceff1;
+      --clear-c:      #546e7a;
+      --clear-br:     #b0bec5;
+      --clear-hover:  #cfd8dc;
+      --status-info-bg: #e6f6f7; --status-info-br: #b2e4e6; --status-info-c: #10868b;
+      --status-ok-bg:   #e8f5e9; --status-ok-br:   #a5d6a7; --status-ok-c:   #2e7d32;
+      --status-err-bg:  #ffebee; --status-err-br:  #ef9a9a; --status-err-c:  #c62828;
+      --status-wait-bg: #fff8e1; --status-wait-br: #ffe082; --status-wait-c: #c67700;
+      --thead-bg:     #f8f9fa;
+      --thead-border: #cfd8dc;
+      --footer-bg:    #f8f9fa;
+    }
+    [data-theme="dark"] {
+      --bg:           #0f1117;
+      --surface:      #1a1d27;
+      --surface2:     #22263a;
+      --border:       #2e3348;
+      --border2:      #252836;
+      --text:         #e8eaf6;
+      --text2:        #9fa8c7;
+      --text3:        #5c6490;
+      --shadow:       rgba(0,0,0,0.3);
+      --shadow2:      rgba(0,0,0,0.25);
+      --input-bg:     #22263a;
+      --hover-row:    #1e2235;
+      --badge-seat-bg:#2c2800;
+      --badge-seat-c: #ffd54f;
+      --badge-seat-br:#4a3800;
+      --badge-M-bg:   #2a2a2a;
+      --badge-M-c:    #ccc;
+      --badge-F-bg:   #2d0f1c;
+      --badge-F-c:    #f48fb1;
+      --tab-hover-bg: #1e2235;
+      --clear-bg:     #22263a;
+      --clear-c:      #9fa8c7;
+      --clear-br:     #2e3348;
+      --clear-hover:  #2e3348;
+      --status-info-bg: #0d2a2b; --status-info-br: #14a2a8; --status-info-c: #4dd0e1;
+      --status-ok-bg:   #0a2010; --status-ok-br:   #388e3c; --status-ok-c:   #81c784;
+      --status-err-bg:  #2d0909; --status-err-br:  #c62828; --status-err-c:  #ef9a9a;
+      --status-wait-bg: #2c2000; --status-wait-br: #f59e0b; --status-wait-c: #fcd34d;
+      --thead-bg:     #22263a;
+      --thead-border: #2e3348;
+      --footer-bg:    #1a1d27;
+    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: Arial, sans-serif;
-      background: #eef2f7;
-      color: #222;
+      font-family: 'Inter', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
       font-size: 14px;
       min-height: 100vh;
-    }
-
-    /* ── TOP BAR ── */
-    .top-bar {
-      background: #ffffff;
-      color: #555;
-      font-size: 11px;
-      padding: 6px 24px;
-      display: flex;
-      justify-content: space-between;
-      border-bottom: 1px solid #eaeaea;
+      transition: background 0.3s, color 0.3s;
     }
 
     /* ── HEADER ── */
     .main-header {
-      background: #fff;
-      padding: 15px 24px;
+      background: var(--surface);
+      padding: 16px 24px;
       display: flex;
       align-items: center;
       gap: 14px;
-      border-bottom: 1px solid #eaeaea;
+      border-bottom: 1px solid var(--border2);
+      box-shadow: 0 2px 8px var(--shadow);
+      transition: background 0.3s, border-color 0.3s;
     }
+    .header-icon { font-size: 32px; line-height: 1; }
     .header-text h1 {
-      font-size: 18px;
-      font-weight: 700;
-      color: #222;
+      font-size: 19px;
+      font-weight: 800;
+      background: linear-gradient(90deg, var(--accent), #0d7377);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.3px;
     }
     .header-text p {
-      font-size: 13px;
-      color: #555;
-      margin-top: 4px;
+      font-size: 12.5px;
+      color: var(--text2);
+      margin-top: 3px;
     }
     .header-right {
       margin-left: auto;
-      font-size: 12px;
-      color: #333;
-      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .sky-tag {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text3);
+      letter-spacing: 0.5px;
       text-align: right;
     }
-    .header-right small { font-weight: 400; color: #777; display: block; }
-
-    /* ── TABS ── */
-    .tabs-container {
-      background: #fff;
-      border-bottom: 1px solid #dce3f0;
-      padding: 0 24px;
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
+    .sky-tag span {
+      display: block;
+      background: linear-gradient(90deg, #f59e0b, #ef4444, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 1px;
     }
-    .round-tabs, .view-tabs {
-      display: flex;
-      gap: 0;
-    }
-    .tab {
-      padding: 10px 20px;
+    /* ── THEME TOGGLE ── */
+    #themeBtn {
+      background: var(--surface2);
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      padding: 6px 14px;
       font-size: 13px;
       font-weight: 600;
-      color: #546e7a;
+      color: var(--text2);
       cursor: pointer;
-      border-bottom: 3px solid transparent;
-      margin-bottom: -1px;
-      user-select: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+      white-space: nowrap;
     }
-    .tab:hover { color: #14a2a8; background: #e6f6f7; }
-    .tab.active { color: #14a2a8; border-bottom-color: #14a2a8; }
-    .tab.disabled { color: #b0bec5; cursor: not-allowed; }
-    
-    .view-tabs .tab {
-      color: #555;
-    }
-    .view-tabs .tab.active {
-      color: #14a2a8;
-      border-bottom-color: #14a2a8;
-      background: #e6f6f7;
+    #themeBtn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-light);
     }
 
+    /* ── LAYOUT ── */
+    .layout-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 16px 40px;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    .sidebar {
+      width: 260px;
+      flex-shrink: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      box-shadow: 0 1px 4px var(--shadow);
+      transition: background 0.3s, border-color 0.3s;
+      position: sticky;
+      top: 20px;
+    }
+
+    .content-wrapper {
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* ── LARGE ROUND TABS ── */
+    .round-selector-wrapper {
+      max-width: 1100px;
+      margin: 24px auto;
+      padding: 0 16px;
+    }
+    .round-tabs {
+      display: flex;
+      background: var(--surface);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: 0 2px 8px var(--shadow);
+      transition: background 0.3s, border-color 0.3s;
+    }
+    .round-tabs .tab {
+      flex: 1;
+      text-align: center;
+      padding: 18px 20px;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text2);
+      cursor: pointer;
+      border-right: 1px solid var(--border);
+      transition: all 0.2s;
+      user-select: none;
+    }
+    .round-tabs .tab:last-child { border-right: none; }
+    .round-tabs .tab.active { background: var(--accent); color: #fff; }
+    .round-tabs .tab:hover:not(.active):not(.disabled) { background: var(--hover-row); color: var(--accent); }
+    .round-tabs .tab.disabled { background: var(--surface2); color: var(--text3); cursor: not-allowed; }
+
+    /* ── SIDEBAR VIEWS ── */
+    .view-tabs {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .view-tabs .tab {
+      padding: 14px 18px;
+      border-radius: 6px;
+      border: none;
+      color: var(--text2);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+      font-size: 14px;
+    }
+    .view-tabs .tab:hover { background: var(--hover-row); color: var(--accent); }
+    .view-tabs .tab.active { background: var(--accent-light); color: var(--accent); }
+
     .badge-coming {
-      font-size: 9px;
-      background: #fff3cd;
-      color: #c67700;
-      border: 1px solid #ffd54f;
-      border-radius: 2px;
-      padding: 1px 5px;
-      margin-left: 6px;
+      font-size: 10px;
+      background: var(--status-err-bg);
+      color: var(--status-err-c);
+      border: 1px solid var(--status-err-br);
+      border-radius: 4px;
+      padding: 2px 6px;
+      margin-left: 8px;
       font-weight: 700;
       vertical-align: middle;
     }
 
-    /* ── WRAPPER ── */
-    .wrapper {
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 20px 16px 40px;
+    /* Responsive */
+    @media (max-width: 768px) {
+      .layout-container { flex-direction: column; }
+      .sidebar {
+        width: 100%;
+        position: static;
+        padding: 8px;
+      }
+      .view-tabs {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 6px;
+      }
+      .view-tabs .tab { 
+        white-space: nowrap; 
+        padding: 10px 12px; 
+        flex: 1 1 auto;
+        text-align: center;
+        font-size: 13px;
+      }
+      .round-selector-wrapper { margin: 16px auto; padding: 0 12px; }
+      .round-tabs .tab { 
+        font-size: 14px; 
+        padding: 12px 8px; 
+        display: flex; 
+        flex-direction: column; 
+        align-items: center; 
+        justify-content: center; 
+        gap: 4px;
+      }
+      .badge-coming { margin-left: 0; }
+      
+      /* Fix header wrapping on mobile */
+      .main-header { padding: 12px; gap: 8px; flex-direction: column; text-align: center; }
+      .header-icon { display: none; }
+      .header-text h1 { font-size: 16px; }
+      .header-text p { font-size: 11px; margin-top: 2px; }
+      .header-right { 
+        width: 100%; 
+        margin-left: 0; 
+        margin-top: 4px;
+        flex-direction: row; 
+        align-items: center; 
+        justify-content: space-evenly; 
+        gap: 8px;
+        padding-top: 10px;
+        border-top: 1px solid var(--border);
+      }
+      .sky-tag { text-align: left; }
+      
+      /* Fix rank card on mobile */
+      .rank-card { flex-direction: column; }
+      .rank-badge { width: 100%; padding: 10px 0; font-size: 18px; }
+      .rank-cutoff { 
+        border-left: none; 
+        border-top: 1px solid var(--border); 
+        flex-direction: row; 
+        justify-content: space-between; 
+        padding: 12px 18px;
+      }
+      .rank-cutoff .cutoff-label { margin-top: 0; }
     }
 
     /* ── SEARCH CARD ── */
     .search-card {
-      background: #fff;
-      border: 1px solid #dce3f0;
-      border-radius: 4px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
       padding: 16px 20px;
       margin-bottom: 14px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      box-shadow: 0 1px 4px var(--shadow);
+      transition: background 0.3s, border-color 0.3s;
     }
     .search-card label.main-label {
       display: block;
       font-size: 14px;
       font-weight: 700;
-      color: #37474f;
+      color: var(--text);
       margin-bottom: 10px;
-      border-bottom: 1px solid #f0f4f8;
+      border-bottom: 1px solid var(--border);
       padding-bottom: 6px;
     }
     .search-row { display: flex; gap: 10px; align-items: center; }
     #searchInput {
       flex: 1;
       padding: 9px 14px;
-      border: 1.5px solid #90a4ae;
-      border-radius: 3px;
+      border: 1.5px solid var(--border);
+      border-radius: 4px;
       font-size: 14px;
       font-family: inherit;
       outline: none;
+      background: var(--input-bg);
+      color: var(--text);
+      transition: border-color 0.2s, background 0.3s, color 0.3s;
     }
-    #searchInput:focus { border-color: #14a2a8; }
+    #searchInput:focus { border-color: var(--accent); }
     #clearBtn {
-      background: #eceff1;
-      color: #546e7a;
-      border: 1px solid #b0bec5;
-      border-radius: 3px;
+      background: var(--clear-bg);
+      color: var(--clear-c);
+      border: 1px solid var(--clear-br);
+      border-radius: 4px;
       padding: 8px 14px;
       font-size: 13px;
       cursor: pointer;
       display: none;
+      font-family: inherit;
+      transition: background 0.2s;
     }
-    #clearBtn:hover { background: #cfd8dc; }
-    .search-hint { margin-top: 6px; font-size: 11.5px; color: #78909c; }
+    #clearBtn:hover { background: var(--clear-hover); }
+    .search-hint { margin-top: 6px; font-size: 11.5px; color: var(--text3); }
 
     /* ── CUTOFF CONTROLS ── */
     .filters-grid {
@@ -162,47 +376,52 @@
     .filter-group label {
       display: block;
       font-size: 11.5px;
-      color: #546e7a;
+      color: var(--text2);
       margin-bottom: 4px;
       font-weight: 600;
     }
-    .filter-group select {
+    .filter-group select, .filter-group input {
       width: 100%;
       padding: 8px 10px;
-      border: 1.5px solid #90a4ae;
-      border-radius: 3px;
+      border: 1.5px solid var(--border);
+      border-radius: 4px;
       font-size: 13px;
       outline: none;
-      background: #fff;
+      background: var(--input-bg);
+      color: var(--text);
+      font-family: inherit;
+      transition: border-color 0.2s, background 0.3s;
     }
-    .filter-group select:focus { border-color: #14a2a8; }
+    .filter-group select:focus, .filter-group input:focus { border-color: var(--accent); }
 
     /* ── STATUS ── */
     .status {
       font-size: 12.5px;
       padding: 7px 12px;
-      border-radius: 3px;
+      border-radius: 4px;
       margin-bottom: 12px;
+      transition: background 0.3s;
     }
-    .status.info  { background: #e6f6f7; border: 1px solid #b2e4e6; color: #10868b; }
-    .status.ok    { background: #e8f5e9; border: 1px solid #a5d6a7; color: #2e7d32; }
-    .status.error { background: #ffebee; border: 1px solid #ef9a9a; color: #c62828; }
-    .status.wait  { background: #fff8e1; border: 1px solid #ffe082; color: #c67700; }
+    .status.info  { background: var(--status-info-bg); border: 1px solid var(--status-info-br); color: var(--status-info-c); }
+    .status.ok    { background: var(--status-ok-bg);   border: 1px solid var(--status-ok-br);   color: var(--status-ok-c);   }
+    .status.error { background: var(--status-err-bg);  border: 1px solid var(--status-err-br);  color: var(--status-err-c);  }
+    .status.wait  { background: var(--status-wait-bg); border: 1px solid var(--status-wait-br); color: var(--status-wait-c); }
 
     /* ── RESULTS META ── */
-    .results-meta { font-size: 12.5px; color: #546e7a; margin-bottom: 10px; }
+    .results-meta { font-size: 12.5px; color: var(--text2); margin-bottom: 10px; }
 
     /* ── RESULT CARD ── */
     .result-card {
-      background: #fff;
-      border: 1px solid #dce3f0;
-      border-radius: 4px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
       margin-bottom: 12px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      box-shadow: 0 1px 3px var(--shadow2);
       overflow: hidden;
+      transition: background 0.3s, border-color 0.3s;
     }
     .college-banner {
-      background: #14a2a8;
+      background: linear-gradient(135deg, var(--accent), var(--accent-dark));
       color: #fff;
       padding: 12px 18px;
     }
@@ -213,117 +432,123 @@
       grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
       padding: 14px 18px;
       gap: 4px 0;
+      background: var(--surface);
     }
     .detail-item { padding: 5px 10px 5px 0; }
     .detail-label {
       font-size: 10px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      color: #90a4ae;
+      color: var(--text3);
       margin-bottom: 2px;
     }
-    .detail-value { font-size: 13.5px; font-weight: 700; color: #222; }
-    .detail-value.name-val { font-size: 15px; color: #14a2a8; }
+    .detail-value { font-size: 13.5px; font-weight: 700; color: var(--text); }
+    .detail-value.name-val { font-size: 15px; color: var(--accent); }
     
     .badge {
       display: inline-block;
       padding: 2px 9px;
-      border-radius: 2px;
+      border-radius: 3px;
       font-size: 11px;
       font-weight: 700;
     }
-    .badge-M { background: #f0f0f0; color: #444; }
-    .badge-F { background: #fce4ec; color: #880e4f; }
-    .badge-seat { background: #fff8e1; color: #e65100; border: 1px solid #ffe082; }
+    .badge-M { background: var(--badge-M-bg); color: var(--badge-M-c); }
+    .badge-F { background: var(--badge-F-bg); color: var(--badge-F-c); }
+    .badge-seat { background: var(--badge-seat-bg); color: var(--badge-seat-c); border: 1px solid var(--badge-seat-br); }
     
     .course-row {
-      border-top: 1px solid #f0f4f8;
+      border-top: 1px solid var(--border);
       padding: 8px 18px;
       font-size: 12.5px;
-      color: #546e7a;
+      color: var(--text2);
+      background: var(--surface2);
     }
-    .course-row strong { color: #14a2a8; }
+    .course-row strong { color: var(--accent); }
 
     /* ── CUTOFF TABLE ── */
     .table-wrapper {
-      background: #fff;
-      border: 1px solid #dce3f0;
-      border-radius: 4px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
       overflow-x: auto;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      box-shadow: 0 1px 3px var(--shadow2);
     }
     table.cutoff-table {
       width: 100%;
       border-collapse: collapse;
       font-size: 13px;
     }
-    table.cutoff-table thead { background: #f8f9fa; border-bottom: 2px solid #cfd8dc; }
+    table.cutoff-table thead { background: var(--thead-bg); border-bottom: 2px solid var(--thead-border); }
     table.cutoff-table th {
       padding: 10px 12px;
       text-align: left;
-      color: #37474f;
+      color: var(--text);
       font-weight: 700;
       white-space: nowrap;
     }
-    table.cutoff-table tbody tr { border-bottom: 1px solid #eceff1; }
-    table.cutoff-table tbody tr:hover { background: #e6f6f7; }
-    table.cutoff-table td { padding: 9px 12px; color: #222; }
+    table.cutoff-table tbody tr { border-bottom: 1px solid var(--border); }
+    table.cutoff-table tbody tr:hover { background: var(--hover-row); }
+    table.cutoff-table td { padding: 9px 12px; color: var(--text); }
     table.cutoff-table td.col-marks {
       font-weight: 700;
-      color: #14a2a8;
+      color: var(--accent);
       font-size: 14px;
     }
-    table.cutoff-table td.col-college { color: #444; }
-    table.cutoff-table td.col-college strong { color: #222; display: block; margin-bottom: 2px; }
+    table.cutoff-table td.col-college { color: var(--text2); }
+    table.cutoff-table td.col-college strong { color: var(--text); display: block; margin-bottom: 2px; }
 
     /* ── PAGINATION ── */
     .pagination { margin-top: 14px; display: flex; gap: 4px; flex-wrap: wrap; }
     .pagination button {
       padding: 5px 12px;
-      border: 1px solid #90a4ae;
-      background: #fff;
-      color: #37474f;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
       cursor: pointer;
       font-size: 13px;
-      border-radius: 2px;
+      border-radius: 3px;
+      font-family: inherit;
+      transition: background 0.2s;
     }
-    .pagination button.active { background: #14a2a8; color: #fff; border-color: #14a2a8; }
-    .pagination button:hover:not(.active) { background: #e6f6f7; }
-    .ellipsis { padding: 5px 4px; color: #90a4ae; }
+    .pagination button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .pagination button:hover:not(.active) { background: var(--hover-row); }
+    .ellipsis { padding: 5px 4px; color: var(--text3); }
 
     /* ── PLACEHOLDER ── */
     .placeholder {
-      background: #fff;
-      border: 1px solid #dce3f0;
-      border-radius: 4px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
       text-align: center;
       padding: 36px 20px;
-      color: #90a4ae;
+      color: var(--text3);
       font-size: 14px;
+      transition: background 0.3s;
     }
     .placeholder .icon { font-size: 36px; margin-bottom: 10px; }
 
     /* ── TOP COLLEGES ── */
     .top-desc {
-      background: #fff;
-      border: 1px solid #dce3f0;
-      border-radius: 4px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
       padding: 14px 20px;
       margin-bottom: 14px;
       font-size: 13px;
-      color: #555;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      color: var(--text2);
+      box-shadow: 0 1px 4px var(--shadow);
     }
-    .top-desc strong { color: #14a2a8; }
+    .top-desc strong { color: var(--accent); }
     .rank-card {
-      background: #fff;
-      border: 1px solid #dce3f0;
-      border-radius: 4px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
       margin-bottom: 10px;
       display: flex;
       align-items: stretch;
       overflow: hidden;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      box-shadow: 0 1px 3px var(--shadow2);
+      transition: background 0.3s, border-color 0.3s;
     }
     .rank-badge {
       display: flex;
@@ -333,7 +558,7 @@
       font-size: 22px;
       font-weight: 800;
       color: #fff;
-      background: #14a2a8;
+      background: var(--accent);
     }
     .rank-badge.gold   { background: #f59e0b; }
     .rank-badge.silver { background: #94a3b8; }
@@ -345,15 +570,15 @@
     .rank-info .rank-college {
       font-size: 15px;
       font-weight: 700;
-      color: #222;
+      color: var(--text);
       margin-bottom: 3px;
     }
     .rank-info .rank-sub {
       font-size: 12px;
-      color: #777;
+      color: var(--text2);
     }
     .rank-info .rank-sub a {
-      color: #14a2a8;
+      color: var(--accent);
       text-decoration: none;
       font-weight: 600;
     }
@@ -364,77 +589,85 @@
       align-items: center;
       justify-content: center;
       padding: 12px 20px;
-      border-left: 1px solid #f0f4f8;
+      border-left: 1px solid var(--border);
       min-width: 120px;
     }
     .rank-cutoff .cutoff-val {
       font-size: 22px;
       font-weight: 800;
-      color: #14a2a8;
+      color: var(--accent);
     }
     .rank-cutoff .cutoff-label {
       font-size: 10px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      color: #90a4ae;
+      color: var(--text3);
       margin-top: 2px;
     }
 
     /* ── FOOTER ── */
     .footer {
-      background: #f8f9fa;
-      color: #555;
+      background: var(--footer-bg);
+      color: var(--text2);
       text-align: center;
       padding: 16px;
       font-size: 12px;
       margin-top: 20px;
-      border-top: 1px solid #eaeaea;
+      border-top: 1px solid var(--border2);
+      transition: background 0.3s;
     }
-    .footer a { color: #14a2a8; text-decoration: none; font-weight: 600; }
+    .footer a { color: var(--accent); text-decoration: none; font-weight: 600; }
     .footer a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
 
-<!-- TOP BAR -->
-<div class="top-bar">
-  <span>State Common Entrance Test Cell, Maharashtra State</span>
-  <span>DSE 2026-27 | Unofficial Search Tool</span>
-</div>
-
 <!-- HEADER -->
 <div class="main-header">
-  <div style="font-size:36px">🏛️</div>
+  <div class="header-icon">🏛️</div>
   <div class="header-text">
     <h1>DSE 2026 — CAP Allotment Result Search</h1>
     <p>Direct Second Year Engineering | Institute-Wise Allotment List</p>
   </div>
   <div class="header-right">
-    Academic Year 2026-27
-    <small>Data: MAHACET Official PDFs</small>
+    <div class="sky-tag">
+      Unofficial tool made by
+      <span>✦ SKY ✦</span>
+    </div>
+    <button id="themeBtn" onclick="toggleTheme()" title="Toggle dark/light mode">
+      <span id="themeIcon">🌙</span>
+      <span id="themeLabel">Dark</span>
+    </button>
   </div>
 </div>
 
-<!-- TABS -->
-<div class="tabs-container">
+<!-- LARGE ROUND TABS -->
+<div class="round-selector-wrapper">
   <div class="round-tabs">
     <div class="tab active" id="tab-1" onclick="switchRound(1)">CAP Round I</div>
     <div class="tab disabled" id="tab-2">
       CAP Round II <span class="badge-coming">Results: 14 Aug</span>
     </div>
   </div>
-  <div class="view-tabs">
-    <div class="tab active" id="viewTab-search" onclick="switchView('search')">Student Search</div>
-    <div class="tab" id="viewTab-cutoff" onclick="switchView('cutoff')">Cut-off Analyzer</div>
-    <div class="tab" id="viewTab-top15" onclick="switchView('top15')">Top 15 Colleges</div>
-  </div>
 </div>
 
-<!-- MAIN -->
-<div class="wrapper">
+<!-- MAIN LAYOUT -->
+<div class="layout-container">
   
-  <!-- STATUS -->
-  <div class="status info" id="statusBar">⏳ Loading data...</div>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="view-tabs">
+      <div class="tab active" id="viewTab-search" onclick="switchView('search')">Student Search</div>
+      <div class="tab" id="viewTab-cutoff" onclick="switchView('cutoff')">Cut-off Analyzer</div>
+      <div class="tab" id="viewTab-top15" onclick="switchView('top15')">Top 15 Colleges</div>
+    </div>
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="content-wrapper">
+    
+    <!-- STATUS -->
+    <div class="status info" id="statusBar">⏳ Loading data...</div>
 
   <!-- ==================== STUDENT SEARCH VIEW ==================== -->
   <div id="searchView">
@@ -447,7 +680,7 @@
         <button id="clearBtn" onclick="clearSearch()">✕ Clear</button>
       </div>
       <div class="search-hint">
-        Results appear instantly as you type. Min. 2 characters. App ID format: <strong>DSE26XXXXXX</strong>
+        Search by any part of the name — first + last name works without knowing the father's name. Min. 2 characters. App ID format: <strong>DSE26XXXXXX</strong>
       </div>
     </div>
 
@@ -465,10 +698,9 @@
       <label class="main-label" id="cutoffLabel">Cut-off Analyzer — CAP Round I</label>
       <div class="filters-grid">
         <div class="filter-group">
-          <label for="cutoffCollege">Select College</label>
-          <select id="cutoffCollege" onchange="calculateCutoffs()">
-            <option value="">-- All Colleges --</option>
-          </select>
+          <label for="cutoffCollege">Search or Select College</label>
+          <input type="text" id="cutoffCollege" list="collegeDatalist" oninput="calculateCutoffs()" onchange="calculateCutoffs()" placeholder="-- All Colleges --">
+          <datalist id="collegeDatalist"></datalist>
         </div>
         <div class="filter-group">
           <label for="cutoffCourse">Select Course</label>
@@ -512,15 +744,28 @@
     </div>
   </div>
 
+  </main>
 </div>
 
 <!-- FOOTER -->
 <div class="footer">
-  Data sourced from official MAHACET CAP allotment PDFs &nbsp;|&nbsp;
-  Unofficial search tool — for official information visit
-  <a href="https://dse2026.mahacet.org.in" target="_blank">dse2026.mahacet.org.in</a>
-  &nbsp;|&nbsp;
-  <a href="https://mahacet.org.in" target="_blank">mahacet.org.in</a>
+  <div style="margin-bottom: 8px;">
+    Data sourced from official MAHACET CAP allotment PDFs &nbsp;|&nbsp;
+    For official info visit <a href="https://dse2026.mahacet.org.in" target="_blank">dse2026.mahacet.org.in</a>
+  </div>
+  <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 14px; font-size: 13px;">
+    <span>Made with ❤️ by <strong style="color:var(--accent)">SKY</strong></span>
+    <span style="color:var(--border)">|</span>
+    <span style="color:var(--text3)">Follow us on:</span>
+    <a href="http://www.linkedin.com/in/yashraj-hande-" target="_blank" title="LinkedIn" style="display:flex; align-items:center; gap:5px; color:var(--text); text-decoration:none;">
+      <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+      <span style="font-weight:600">LinkedIn</span>
+    </a>
+    <a href="https://github.com/yashrajhande" target="_blank" title="GitHub" style="display:flex; align-items:center; gap:5px; color:var(--text); text-decoration:none;">
+      <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+      <span style="font-weight:600">GitHub</span>
+    </a>
+  </div>
 </div>
 
 <script>
@@ -590,7 +835,7 @@
       .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
       .then(data => {
         rounds[round] = data;
-        nameIndexes[round] = data.map(r => r.name.toUpperCase());
+        nameIndexes[round] = data.map(r => r.name.toUpperCase().split(/\s+/));
         idIndexes[round]   = data.map(r => r.appId.toUpperCase());
         updateLoadedStatus(round);
         
@@ -644,8 +889,22 @@
     filtered = [];
     const ni = nameIndexes[currentRound];
     const ii = idIndexes[currentRound];
+
+    // Split query into individual tokens (e.g. "Shreya Shete" → ["SHREYA","SHETE"])
+    const isAppId = q.startsWith('DSE');
+    const tokens  = q.split(/\s+/).filter(Boolean);
+
     for (let i = 0; i < data.length; i++) {
-      if (ni[i].includes(q) || ii[i].includes(q)) filtered.push(data[i]);
+      // App ID search: unchanged exact-substring match
+      if (isAppId) {
+        if (ii[i].includes(q)) filtered.push(data[i]);
+        continue;
+      }
+      // Name search: every query token must appear in at least one word of the name
+      // e.g. tokens ["SHREYA","SHETE"] both found in ["SHREYA","SANDIP","SHETE"] → match
+      const nameWords = ni[i]; // pre-split array
+      const allMatch  = tokens.every(tok => nameWords.some(w => w.includes(tok)));
+      if (allMatch) filtered.push(data[i]);
     }
     const ms = (performance.now() - t0).toFixed(1);
     setStatus(`✅ Found ${filtered.length.toLocaleString()} record(s) in ${ms} ms.`, 'ok');
@@ -684,19 +943,29 @@
     });
 
     const populate = (id, items, mapFn) => {
-      const select = document.getElementById(id);
-      const val = select.value;
-      select.innerHTML = select.firstElementChild.outerHTML; // Keep first default option
-      items.sort().forEach(item => {
-        const opt = document.createElement('option');
-        opt.value = item;
-        opt.textContent = mapFn ? mapFn(item) : item;
-        select.appendChild(opt);
-      });
-      select.value = val; // Try to retain previous selection
+      const el = document.getElementById(id);
+      const isDatalist = el.tagName === 'DATALIST';
+      if (!isDatalist) {
+        const val = el.value;
+        el.innerHTML = el.firstElementChild.outerHTML; // Keep first default option
+        items.sort().forEach(item => {
+          const opt = document.createElement('option');
+          opt.value = item;
+          opt.textContent = mapFn ? mapFn(item) : item;
+          el.appendChild(opt);
+        });
+        el.value = val;
+      } else {
+        el.innerHTML = '';
+        items.sort().forEach(item => {
+          const opt = document.createElement('option');
+          opt.value = mapFn ? mapFn(item) : item;
+          el.appendChild(opt);
+        });
+      }
     };
 
-    populate('cutoffCollege', Array.from(colMap.keys()), code => `${colMap.get(code)} (${code})`);
+    populate('collegeDatalist', Array.from(colMap.keys()), code => `${colMap.get(code)} (${code})`);
     populate('cutoffCourse', Array.from(courses));
     populate('cutoffSeatType', Array.from(seatTypes));
 
@@ -707,7 +976,11 @@
     const data = rounds[currentRound];
     if (!data || !data.length) return;
 
-    const filterCol = document.getElementById('cutoffCollege').value;
+    let filterCol = document.getElementById('cutoffCollege').value.trim();
+    if (filterCol) {
+      const match = filterCol.match(/\((\d+)\)$/);
+      if (match) filterCol = match[1];
+    }
     const filterCourse = document.getElementById('cutoffCourse').value;
     const filterSeat = document.getElementById('cutoffSeatType').value;
 
@@ -1065,6 +1338,28 @@
     area.innerHTML = html;
     setStatus(`🏆 Top 15 colleges ranked by highest ${seatType} cut-off.`, 'ok');
   }
+
+  // ── THEME TOGGLE ──────────────────────────────────────────────────────────
+  function toggleTheme() {
+    const html  = document.documentElement;
+    const isDark = html.getAttribute('data-theme') === 'dark';
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    document.getElementById('themeIcon').textContent  = isDark ? '🌙' : '☀️';
+    document.getElementById('themeLabel').textContent = isDark ? 'Dark' : 'Light';
+    try { localStorage.setItem('dse-theme', isDark ? 'light' : 'dark'); } catch(e) {}
+  }
+
+  // Restore saved theme on load
+  (function() {
+    try {
+      const saved = localStorage.getItem('dse-theme');
+      if (saved === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        document.getElementById('themeIcon').textContent  = '☀️';
+        document.getElementById('themeLabel').textContent = 'Light';
+      }
+    } catch(e) {}
+  })();
 
   // ── INIT ──────────────────────────────────────────────────────────────────
   loadRound(1);
