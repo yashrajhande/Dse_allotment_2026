@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -222,7 +222,90 @@
     .round-tabs .tab:hover:not(.active):not(.disabled) { background: var(--hover-row); color: var(--accent); }
     .round-tabs .tab.disabled { background: var(--surface2); color: var(--text3); cursor: not-allowed; }
 
-    /* ── SIDEBAR VIEWS ── */
+    /* ── SIDEBAR VIEWS & MOBILE DRAWER ── */
+    .mobile-menu-bar {
+      display: none;
+    }
+    .hamburger-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      cursor: pointer;
+      box-shadow: 0 2px 6px var(--shadow);
+      transition: all 0.2s;
+      user-select: none;
+    }
+    .hamburger-btn .hamburger-icon {
+      font-size: 18px;
+      line-height: 1;
+    }
+    .hamburger-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-light);
+    }
+
+    .sidebar-header-mobile {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-mobile-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sidebar-close-btn {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: var(--text2);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .sidebar-close-btn:hover {
+      background: var(--status-err-bg);
+      color: var(--status-err-c);
+      border-color: var(--status-err-br);
+    }
+
+    .sidebar-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(2px);
+      z-index: 998;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .sidebar-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
     .view-tabs {
       display: flex;
       flex-direction: column;
@@ -238,6 +321,9 @@
       transition: all 0.2s;
       user-select: none;
       font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
     .view-tabs .tab:hover { background: var(--hover-row); color: var(--accent); }
     .view-tabs .tab.active { background: var(--accent-light); color: var(--accent); }
@@ -256,24 +342,50 @@
 
     /* Responsive */
     @media (max-width: 768px) {
-      .layout-container { flex-direction: column; }
+      .mobile-menu-bar {
+        display: flex;
+        max-width: 1100px;
+        margin: -10px auto 14px;
+        padding: 0 12px;
+      }
+      .sidebar-header-mobile {
+        display: flex;
+      }
       .sidebar {
-        width: 100%;
-        position: static;
-        padding: 8px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 280px;
+        max-width: 82vw;
+        height: 100vh;
+        height: 100dvh;
+        z-index: 999;
+        border-radius: 0 12px 12px 0;
+        border-top: none;
+        border-left: none;
+        border-bottom: none;
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.25);
+        transform: translateX(-100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s;
+        overflow-y: auto;
+        padding: 18px 16px;
+      }
+      .sidebar.active {
+        transform: translateX(0);
       }
       .view-tabs {
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 6px;
+        flex-direction: column;
+        gap: 8px;
       }
       .view-tabs .tab { 
-        white-space: nowrap; 
-        padding: 10px 12px; 
-        flex: 1 1 auto;
-        text-align: center;
-        font-size: 13px;
+        text-align: left; 
+        padding: 14px 16px; 
+        font-size: 14px;
+        white-space: normal;
+      }
+      .layout-container {
+        flex-direction: column;
+        padding: 0 12px 30px;
       }
       .round-selector-wrapper { margin: 16px auto; padding: 0 12px; }
       .round-tabs .tab { 
@@ -622,6 +734,9 @@
 </head>
 <body>
 
+<!-- MOBILE SIDEBAR OVERLAY BACKDROP -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeMobileSidebar()"></div>
+
 <!-- HEADER -->
 <div class="main-header">
   <div class="header-icon">🏛️</div>
@@ -635,8 +750,8 @@
       <span>✦ SKY ✦</span>
     </div>
     <button id="themeBtn" onclick="toggleTheme()" title="Toggle dark/light mode">
-      <span id="themeIcon">🌙</span>
-      <span id="themeLabel">Dark</span>
+      <span id="themeIcon">☀️</span>
+      <span id="themeLabel">Light</span>
     </button>
   </div>
 </div>
@@ -651,15 +766,35 @@
   </div>
 </div>
 
+<!-- MOBILE MENU BAR (BELOW CAP TABS) -->
+<div class="mobile-menu-bar">
+  <button id="hamburgerBtn" class="hamburger-btn" onclick="toggleMobileSidebar()" aria-label="Toggle Navigation Menu" title="Open Navigation Menu">
+    <span class="hamburger-icon">☰</span>
+    <span class="hamburger-text">Menu / Views</span>
+  </button>
+</div>
+
 <!-- MAIN LAYOUT -->
 <div class="layout-container">
   
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
+  <!-- SIDEBAR DRAWER -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header-mobile">
+      <div class="sidebar-mobile-title">
+        <span>🏛️</span> DSE Navigation
+      </div>
+      <button class="sidebar-close-btn" onclick="closeMobileSidebar()" aria-label="Close Navigation">✕</button>
+    </div>
     <div class="view-tabs">
-      <div class="tab active" id="viewTab-search" onclick="switchView('search')">Student Search</div>
-      <div class="tab" id="viewTab-cutoff" onclick="switchView('cutoff')">Cut-off Analyzer</div>
-      <div class="tab" id="viewTab-top15" onclick="switchView('top15')">Top 15 Colleges</div>
+      <div class="tab active" id="viewTab-search" onclick="switchView('search')">
+        <span>🔍</span> Student Search
+      </div>
+      <div class="tab" id="viewTab-cutoff" onclick="switchView('cutoff')">
+        <span>📊</span> Cut-off Analyzer
+      </div>
+      <div class="tab" id="viewTab-top15" onclick="switchView('top15')">
+        <span>🏆</span> Top 15 Colleges
+      </div>
     </div>
   </aside>
 
@@ -807,7 +942,40 @@
     }
   }
 
+  // ── MOBILE SIDEBAR DRAWER HANDLERS ─────────────────────────
+  function toggleMobileSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar && sidebar.classList.contains('active')) {
+      closeMobileSidebar();
+    } else {
+      openMobileSidebar();
+    }
+  }
+
+  function openMobileSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    if (sidebar) sidebar.classList.add('active');
+    if (overlay) overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMobileSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    if (sidebar) sidebar.classList.remove('active');
+    if (overlay) overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeMobileSidebar();
+    }
+  });
+
   function switchView(view) {
+    closeMobileSidebar();
     currentView = view;
     document.querySelectorAll('.view-tabs .tab').forEach(t => t.classList.remove('active'));
     document.getElementById('viewTab-' + view).classList.add('active');
@@ -1349,14 +1517,18 @@
     try { localStorage.setItem('dse-theme', isDark ? 'light' : 'dark'); } catch(e) {}
   }
 
-  // Restore saved theme on load
+  // Restore saved theme on load (default: dark)
   (function() {
     try {
       const saved = localStorage.getItem('dse-theme');
-      if (saved === 'dark') {
-        document.documentElement.setAttribute('data-theme', 'dark');
+      const theme = saved ? saved : 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+      if (theme === 'dark') {
         document.getElementById('themeIcon').textContent  = '☀️';
         document.getElementById('themeLabel').textContent = 'Light';
+      } else {
+        document.getElementById('themeIcon').textContent  = '🌙';
+        document.getElementById('themeLabel').textContent = 'Dark';
       }
     } catch(e) {}
   })();
