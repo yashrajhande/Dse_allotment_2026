@@ -222,6 +222,98 @@
     .round-tabs .tab:hover:not(.active):not(.disabled) { background: var(--hover-row); color: var(--accent); }
     .round-tabs .tab.disabled { background: var(--surface2); color: var(--text3); cursor: not-allowed; }
 
+    /* ── CAP ROUND II — RESULTS TODAY HIGHLIGHT ── */
+    .tab-cap2-live {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #1a0a2e 0%, #16213e 50%, #0f3460 100%) !important;
+      border-left: 1px solid rgba(139, 92, 246, 0.4);
+      cursor: default !important;
+    }
+    [data-theme="light"] .tab-cap2-live {
+      background: linear-gradient(135deg, #f3e8ff 0%, #ede9fe 50%, #dbeafe 100%) !important;
+    }
+    .tab-cap2-live::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(139, 92, 246, 0.08) 30%,
+        rgba(20, 162, 168, 0.08) 70%,
+        transparent 100%);
+      animation: shimmer-cap2 3s ease-in-out infinite;
+    }
+    @keyframes shimmer-cap2 {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+    .tab-cap2-title {
+      font-size: 16px;
+      font-weight: 800;
+      background: linear-gradient(90deg, #a78bfa, #14a2a8, #f59e0b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      display: block;
+      margin-bottom: 6px;
+      letter-spacing: 0.3px;
+    }
+    [data-theme="light"] .tab-cap2-title {
+      background: linear-gradient(90deg, #7c3aed, #0d7377, #d97706);
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+    .ticker-wrapper {
+      overflow: hidden;
+      width: 100%;
+      position: relative;
+    }
+    .ticker-track {
+      display: inline-block;
+      white-space: nowrap;
+      animation: ticker-rtl 14s linear infinite;
+      font-size: 12px;
+      font-weight: 600;
+      color: #f59e0b;
+      letter-spacing: 0.3px;
+    }
+    [data-theme="light"] .ticker-track {
+      color: #b45309;
+    }
+    @keyframes ticker-rtl {
+      0%   { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+    .pulse-dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      background: #ef4444;
+      border-radius: 50%;
+      margin-right: 6px;
+      animation: pulse-dot 1.2s ease-in-out infinite;
+      vertical-align: middle;
+      position: relative;
+      top: -1px;
+    }
+    .pulse-dot::after {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      background: rgba(239, 68, 68, 0.35);
+      animation: pulse-ring 1.2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.25); }
+    }
+    @keyframes pulse-ring {
+      0%, 100% { transform: scale(1); opacity: 0.7; }
+      50% { transform: scale(1.8); opacity: 0; }
+    }
+
     /* ── SIDEBAR VIEWS & MOBILE DRAWER ── */
     .mobile-menu-bar {
       display: none;
@@ -760,8 +852,14 @@
 <div class="round-selector-wrapper">
   <div class="round-tabs">
     <div class="tab active" id="tab-1" onclick="switchRound(1)">CAP Round I</div>
-    <div class="tab disabled" id="tab-2">
-      CAP Round II <span class="badge-coming">Results: 14 Aug</span>
+    <div class="tab tab-cap2-live" id="tab-2">
+      <span class="tab-cap2-title">⚡ CAP Round II</span>
+      <div class="ticker-wrapper">
+        <span class="ticker-track">
+          <span class="pulse-dot"></span>
+          Results dropping TODAY! &nbsp;🔥&nbsp; Your allotment is just hours away — stay tuned! &nbsp;✨&nbsp; Keep refreshing, it's almost here! &nbsp;🚀&nbsp; All the very best to every student! &nbsp;💪
+        </span>
+      </div>
     </div>
   </div>
 </div>
