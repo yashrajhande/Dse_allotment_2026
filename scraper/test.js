@@ -110,8 +110,8 @@ function parseAllotmentText(text, collegeName, collegeCode) {
   let currentGroup = '';
 
   for (const line of lines) {
-    // Course header: "0100219110 - Civil Engineering"
-    const courseMatch = line.match(/^(\d{9,})\s*[-–]\s*(.+)$/);
+    // Course header: "0100219110 - Civil Engineering" or "0628524550F - Computer Engineering"
+    const courseMatch = line.match(/^([0-9A-Za-z]{9,})\s*[-–—]\s*(.+)$/);
     if (courseMatch) {
       currentCourseCode = courseMatch[1].trim();
       currentCourse = courseMatch[2].trim().replace(/\s*Status:.*$/i, '').trim();

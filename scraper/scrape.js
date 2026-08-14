@@ -203,8 +203,8 @@ function parseAllotmentText(text, collegeName, collegeCode) {
   let currentGroup = '';
 
   for (const line of lines) {
-    // Course header: "0100219110 - Civil Engineering"
-    const courseMatch = line.match(/^(\d{9,})\s*[-–]\s*(.+)$/);
+    // Course header: "0100219110 - Civil Engineering" or "0628524550F - Computer Engineering"
+    const courseMatch = line.match(/^([0-9A-Za-z]{9,})\s*[-–—]\s*(.+)$/);
     if (courseMatch) {
       currentCourseCode = courseMatch[1].trim();
       currentCourse = courseMatch[2].trim().replace(/\s*Status:.*$/i, '').trim();
@@ -411,7 +411,11 @@ async function main() {
   console.log('\n🚀 Next step: Open index.html in your browser to search!\n');
 }
 
-main().catch(err => {
-  console.error('Fatal error:', err);
-  process.exit(1);
-});
+if (require.main === module) {
+  main().catch(err => {
+    console.error('Fatal error:', err);
+    process.exit(1);
+  });
+}
+
+module.exports = { parseAllotmentText, parseLine, processCollege };
