@@ -828,6 +828,172 @@
       margin-top: 2px;
     }
 
+    /* ── BETTERMENT TRACKER & STUDENT JOURNEY ── */
+    .betterment-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+    .betterment-stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 2px 6px var(--shadow2);
+      transition: all 0.2s ease-in-out;
+    }
+    .betterment-stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+    .betterment-stat-card .stat-icon {
+      font-size: 28px;
+      line-height: 1;
+      padding: 10px;
+      border-radius: 10px;
+      background: var(--surface2);
+    }
+    .betterment-stat-card .stat-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .betterment-stat-card .stat-val {
+      font-size: 20px;
+      font-weight: 800;
+      line-height: 1.2;
+      color: var(--text);
+    }
+    .betterment-stat-card .stat-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text2);
+      margin-top: 2px;
+    }
+    .betterment-stat-card.card-total .stat-val { color: #10b981; }
+    .betterment-stat-card.card-college .stat-val { color: #06b6d4; }
+    .betterment-stat-card.card-branch .stat-val { color: #8b5cf6; }
+    .betterment-stat-card.card-fresh .stat-val { color: #f59e0b; }
+
+    /* Journey Card */
+    .journey-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px var(--shadow);
+      overflow: hidden;
+      transition: background 0.3s, border-color 0.3s;
+    }
+    .journey-header {
+      background: var(--surface2);
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .journey-student-name {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .journey-student-meta {
+      font-size: 12px;
+      color: var(--text2);
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .journey-body {
+      padding: 18px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 16px;
+      align-items: center;
+    }
+    @media (max-width: 768px) {
+      .journey-body {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+    }
+    .journey-box {
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: 8px;
+      padding: 14px;
+      position: relative;
+    }
+    .journey-box.cap2-box {
+      border-color: var(--accent);
+      background: var(--surface);
+    }
+    .journey-box-title {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text3);
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .journey-box-college {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.3;
+      margin-bottom: 4px;
+    }
+    .journey-box-course {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text2);
+      margin-bottom: 8px;
+    }
+    .journey-box-details {
+      font-size: 11px;
+      color: var(--text3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .journey-arrow-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .journey-arrow-icon {
+      font-size: 24px;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .badge-journey-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .badge-college-upgrade { background: #059669; color: #fff; }
+    .badge-branch-upgrade  { background: #0891b2; color: #fff; }
+    .badge-fresh-allotment { background: #d97706; color: #fff; }
+    .badge-retained        { background: #475569; color: #fff; }
+    .highlight-upgrade     { color: var(--accent); font-weight: 800; }
+
     /* ── FOOTER ── */
     .footer {
       background: var(--footer-bg);
@@ -906,6 +1072,9 @@
       </div>
       <div class="tab" id="viewTab-top15" onclick="switchView('top15')">
         <span>🏆</span> Top 15 Colleges
+      </div>
+      <div class="tab" id="viewTab-betterment" onclick="switchView('betterment')">
+        <span>🔄</span> Betterment Tracker
       </div>
     </div>
   </aside>
@@ -989,6 +1158,84 @@
     <div id="top15ResultsArea">
       <div class="placeholder"><div class="icon">🏆</div>Loading data...</div>
     </div>
+  </div>
+
+
+  <!-- ==================== BETTERMENT TRACKER VIEW ==================== -->
+  <div id="bettermentView" style="display:none">
+    <!-- DASHBOARD STATS -->
+    <div class="betterment-stats-grid">
+      <div class="betterment-stat-card card-total">
+        <div class="stat-icon">🎓</div>
+        <div class="stat-info">
+          <div class="stat-val" id="statTotalBetterment">8,417</div>
+          <div class="stat-label">Total Upgrades</div>
+        </div>
+      </div>
+      <div class="betterment-stat-card card-college">
+        <div class="stat-icon">🏫</div>
+        <div class="stat-info">
+          <div class="stat-val" id="statCollegeBetterment">7,788</div>
+          <div class="stat-label">College Betterments</div>
+        </div>
+      </div>
+      <div class="betterment-stat-card card-branch">
+        <div class="stat-icon">📚</div>
+        <div class="stat-info">
+          <div class="stat-val" id="statBranchBetterment">629</div>
+          <div class="stat-label">Branch Betterments</div>
+        </div>
+      </div>
+      <div class="betterment-stat-card card-fresh">
+        <div class="stat-icon">🆕</div>
+        <div class="stat-info">
+          <div class="stat-val" id="statFreshAllotment">8,346</div>
+          <div class="stat-label">Fresh CAP II Allotments</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEARCH & FILTERS -->
+    <div class="search-card">
+      <label class="main-label">🔄 Track Student Journey & CAP Round II Betterment</label>
+      <div class="search-row">
+        <input type="text" id="bettermentSearchInput"
+               placeholder="Search candidate name or enter DSE26XXXXXX..."
+               autocomplete="off" spellcheck="false" />
+        <button id="bettermentClearBtn" onclick="clearBettermentSearch()">✕ Clear</button>
+      </div>
+      
+      <div class="filters-grid" style="margin-top: 14px;">
+        <div class="filter-group">
+          <label for="bettermentType">Filter Status</label>
+          <select id="bettermentType" onchange="runBettermentSearch()">
+            <option value="upgrades">All Upgrades (College or Branch Betterment)</option>
+            <option value="college">College Betterment Only (7,788)</option>
+            <option value="branch">Branch Betterment Only (629)</option>
+            <option value="fresh">Fresh CAP II Allotments Only (8,346)</option>
+            <option value="retained">Retained Seats (25,889)</option>
+            <option value="all">All Candidates</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="bettermentR1College">CAP Round I College</label>
+          <input type="text" id="bettermentR1College" list="collegeDatalist" oninput="runBettermentSearch()" onchange="runBettermentSearch()" placeholder="-- All CAP 1 Colleges --">
+        </div>
+        <div class="filter-group">
+          <label for="bettermentR2College">CAP Round II College</label>
+          <input type="text" id="bettermentR2College" list="collegeDatalist" oninput="runBettermentSearch()" onchange="runBettermentSearch()" placeholder="-- All CAP 2 Colleges --">
+        </div>
+      </div>
+      <div class="search-hint">
+        Track candidate progress from CAP Round I to CAP Round II. Search by name or Application ID.
+      </div>
+    </div>
+
+    <div class="results-meta" id="bettermentMeta" style="display:none"></div>
+    <div id="bettermentResultsArea">
+      <div class="placeholder"><div class="icon">🔄</div>Loading student journey data...</div>
+    </div>
+    <div class="pagination" id="bettermentPagination"></div>
   </div>
 
   </main>
@@ -1092,9 +1339,10 @@
     document.querySelectorAll('.view-tabs .tab').forEach(t => t.classList.remove('active'));
     document.getElementById('viewTab-' + view).classList.add('active');
 
-    document.getElementById('searchView').style.display  = view === 'search' ? 'block' : 'none';
-    document.getElementById('cutoffView').style.display   = view === 'cutoff' ? 'block' : 'none';
-    document.getElementById('top15View').style.display     = view === 'top15'  ? 'block' : 'none';
+    document.getElementById('searchView').style.display     = view === 'search' ? 'block' : 'none';
+    document.getElementById('cutoffView').style.display     = view === 'cutoff' ? 'block' : 'none';
+    document.getElementById('top15View').style.display      = view === 'top15'  ? 'block' : 'none';
+    document.getElementById('bettermentView').style.display = view === 'betterment' ? 'block' : 'none';
 
     if (view === 'cutoff' && rounds[currentRound]) {
       populateDropdowns();
@@ -1104,6 +1352,9 @@
       populateTop15Dropdown();
       computeTop15();
     }
+    if (view === 'betterment') {
+      ensureBettermentDataLoaded();
+    }
   }
 
   // ── LOAD DATA ─────────────────────────────────────────────────────────────
@@ -1111,7 +1362,7 @@
     setStatus(`⏳ Loading CAP Round ${round === 1 ? 'I' : 'II'} data...`, 'info');
     setPlaceholder('search', '⏳', 'Loading allotment data, please wait...');
 
-    fetch(`data/allotments_round${round}.json`)
+    fetch(`data/allotments_round${round}.json?v=${Date.now()}`, { cache: 'no-cache' })
       .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
       .then(data => {
         rounds[round] = data;
@@ -1617,6 +1868,355 @@
 
     area.innerHTML = html;
     setStatus(`🏆 Top 15 colleges ranked by highest ${seatType} cut-off.`, 'ok');
+  }
+
+  // ── BETTERMENT TRACKER & STUDENT JOURNEY ──────────────────────────────────
+  let bettermentList            = [];
+  let bettermentFiltered        = [];
+  let bettermentCurrentPage     = 1;
+  const BETTERMENT_PAGE_SIZE    = 20;
+  let bettermentDebounceTimer   = null;
+  let bettermentIndexBuilt      = false;
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const bInput = document.getElementById('bettermentSearchInput');
+    if (bInput) {
+      bInput.addEventListener('input', () => {
+        clearTimeout(bettermentDebounceTimer);
+        bettermentDebounceTimer = setTimeout(runBettermentSearch, 150);
+      });
+    }
+  });
+
+  function ensureBettermentDataLoaded() {
+    const r1Needed = rounds[1] === null;
+    const r2Needed = rounds[2] === null;
+
+    if (r1Needed || r2Needed) {
+      setStatus(`⏳ Loading CAP Round I & Round II data for Betterment Tracker...`, 'info');
+      const promises = [];
+      if (r1Needed) {
+        promises.push(
+          fetch(`data/allotments_round1.json?v=${Date.now()}`, { cache: 'no-cache' })
+            .then(r => r.json())
+            .then(d => {
+              rounds[1] = d;
+              nameIndexes[1] = d.map(r => r.name.toUpperCase().split(/\s+/));
+              idIndexes[1]   = d.map(r => r.appId.toUpperCase());
+            })
+        );
+      }
+      if (r2Needed) {
+        promises.push(
+          fetch(`data/allotments_round2.json?v=${Date.now()}`, { cache: 'no-cache' })
+            .then(r => r.json())
+            .then(d => {
+              rounds[2] = d;
+              nameIndexes[2] = d.map(r => r.name.toUpperCase().split(/\s+/));
+              idIndexes[2]   = d.map(r => r.appId.toUpperCase());
+            })
+        );
+      }
+
+      Promise.all(promises).then(() => {
+        buildBettermentIndex();
+      }).catch(err => {
+        setStatus(`❌ Error loading data for Betterment Tracker: ${err.message}`, 'error');
+      });
+    } else if (!bettermentIndexBuilt) {
+      buildBettermentIndex();
+    } else {
+      runBettermentSearch();
+    }
+  }
+
+  function buildBettermentIndex() {
+    if (!rounds[1] || !rounds[2]) return;
+    const t0 = performance.now();
+
+    const r1Map = new Map();
+    rounds[1].forEach(r => r1Map.set(r.appId, r));
+
+    const r2Map = new Map();
+    rounds[2].forEach(r => r2Map.set(r.appId, r));
+
+    const allAppIds = new Set([...r1Map.keys(), ...r2Map.keys()]);
+    bettermentList = [];
+
+    let countCollege = 0;
+    let countBranch  = 0;
+    let countFresh   = 0;
+    let countRetained= 0;
+
+    allAppIds.forEach(appId => {
+      const r1 = r1Map.get(appId) || null;
+      const r2 = r2Map.get(appId) || null;
+      const name = (r2 ? r2.name : r1 ? r1.name : '').trim();
+      const nameWords = name.toUpperCase().split(/\s+/).filter(Boolean);
+
+      let status = 'retained';
+      if (!r1 && r2) {
+        status = 'fresh';
+        countFresh++;
+      } else if (r1 && r2) {
+        if (r1.collegeCode !== r2.collegeCode) {
+          status = 'college';
+          countCollege++;
+        } else if (r1.courseCode !== r2.courseCode || r1.course !== r2.course) {
+          status = 'branch';
+          countBranch++;
+        } else {
+          status = 'retained';
+          countRetained++;
+        }
+      } else if (r1 && !r2) {
+        status = 'not_allotted_r2';
+      }
+
+      bettermentList.push({
+        appId,
+        name,
+        nameWords,
+        r1,
+        r2,
+        status,
+      });
+    });
+
+    const statTotalEl   = document.getElementById('statTotalBetterment');
+    const statCollegeEl = document.getElementById('statCollegeBetterment');
+    const statBranchEl  = document.getElementById('statBranchBetterment');
+    const statFreshEl   = document.getElementById('statFreshAllotment');
+
+    if (statTotalEl)   statTotalEl.textContent   = (countCollege + countBranch).toLocaleString();
+    if (statCollegeEl) statCollegeEl.textContent = countCollege.toLocaleString();
+    if (statBranchEl)  statBranchEl.textContent  = countBranch.toLocaleString();
+    if (statFreshEl)   statFreshEl.textContent   = countFresh.toLocaleString();
+
+    bettermentIndexBuilt = true;
+    const ms = (performance.now() - t0).toFixed(1);
+    setStatus(`✅ Betterment Tracker loaded (${(countCollege + countBranch).toLocaleString()} upgrades indexed in ${ms} ms).`, 'ok');
+
+    runBettermentSearch();
+  }
+
+  function runBettermentSearch() {
+    if (!bettermentList.length) return;
+
+    const input = document.getElementById('bettermentSearchInput');
+    const rawQuery = input ? input.value : '';
+    const q = rawQuery.trim().toUpperCase();
+
+    const clearBtn = document.getElementById('bettermentClearBtn');
+    if (clearBtn) clearBtn.style.display = rawQuery.length ? 'inline-block' : 'none';
+
+    const statusFilter = document.getElementById('bettermentType') ? document.getElementById('bettermentType').value : 'upgrades';
+    const r1ColFilter  = document.getElementById('bettermentR1College') ? document.getElementById('bettermentR1College').value.trim() : '';
+    const r2ColFilter  = document.getElementById('bettermentR2College') ? document.getElementById('bettermentR2College').value.trim() : '';
+
+    const isAppId = q.startsWith('DSE');
+    const tokens  = q.split(/\s+/).filter(Boolean);
+
+    bettermentFiltered = [];
+
+    for (let i = 0; i < bettermentList.length; i++) {
+      const item = bettermentList[i];
+
+      // Status filter
+      if (statusFilter === 'upgrades' && item.status !== 'college' && item.status !== 'branch') continue;
+      if (statusFilter === 'college' && item.status !== 'college') continue;
+      if (statusFilter === 'branch' && item.status !== 'branch') continue;
+      if (statusFilter === 'fresh' && item.status !== 'fresh') continue;
+      if (statusFilter === 'retained' && item.status !== 'retained') continue;
+
+      // College filters
+      if (r1ColFilter) {
+        if (!item.r1) continue;
+        const colMatch = item.r1.collegeCode === r1ColFilter || item.r1.collegeName.toLowerCase().includes(r1ColFilter.toLowerCase());
+        if (!colMatch) continue;
+      }
+      if (r2ColFilter) {
+        if (!item.r2) continue;
+        const colMatch = item.r2.collegeCode === r2ColFilter || item.r2.collegeName.toLowerCase().includes(r2ColFilter.toLowerCase());
+        if (!colMatch) continue;
+      }
+
+      // Query filter
+      if (q.length > 0) {
+        if (isAppId) {
+          if (!item.appId.includes(q)) continue;
+        } else {
+          const allMatch = tokens.every(tok => item.nameWords.some(w => w.includes(tok)));
+          if (!allMatch) continue;
+        }
+      }
+
+      bettermentFiltered.push(item);
+    }
+
+    bettermentCurrentPage = 1;
+    renderBettermentResults();
+  }
+
+  function clearBettermentSearch() {
+    const input = document.getElementById('bettermentSearchInput');
+    if (input) input.value = '';
+    const clearBtn = document.getElementById('bettermentClearBtn');
+    if (clearBtn) clearBtn.style.display = 'none';
+    runBettermentSearch();
+  }
+
+  function renderBettermentResults() {
+    const metaEl = document.getElementById('bettermentMeta');
+    const area   = document.getElementById('bettermentResultsArea');
+    const pagEl  = document.getElementById('bettermentPagination');
+
+    if (!bettermentFiltered.length) {
+      if (metaEl) metaEl.style.display = 'none';
+      if (pagEl) pagEl.innerHTML = '';
+      if (area) area.innerHTML = `<div class="placeholder"><div class="icon">❌</div>No candidates found matching the selected filters.</div>`;
+      return;
+    }
+
+    const totalPages = Math.ceil(bettermentFiltered.length / BETTERMENT_PAGE_SIZE);
+    const start = (bettermentCurrentPage - 1) * BETTERMENT_PAGE_SIZE;
+    const end   = Math.min(start + BETTERMENT_PAGE_SIZE, bettermentFiltered.length);
+    const page  = bettermentFiltered.slice(start, end);
+
+    if (metaEl) {
+      metaEl.style.display = 'block';
+      metaEl.textContent   = `Showing ${start + 1}–${end} of ${bettermentFiltered.length.toLocaleString()} candidate journeys`;
+    }
+
+    let html = '';
+    for (const item of page) {
+      let badgeClass = 'badge-retained';
+      let badgeText  = '🔒 Seat Retained';
+
+      if (item.status === 'college') {
+        badgeClass = 'badge-college-upgrade';
+        badgeText  = '🎉 College Betterment';
+      } else if (item.status === 'branch') {
+        badgeClass = 'badge-branch-upgrade';
+        badgeText  = '✨ Branch Betterment';
+      } else if (item.status === 'fresh') {
+        badgeClass = 'badge-fresh-allotment';
+        badgeText  = '🆕 Fresh CAP II Allotment';
+      }
+
+      const r1 = item.r1;
+      const r2 = item.r2;
+
+      const isCollegeChanged = r1 && r2 && r1.collegeCode !== r2.collegeCode;
+      const isCourseChanged  = r1 && r2 && r1.course !== r2.course;
+
+      const r1Pdf = r1 ? `https://dse2026.mahacet.org.in/downloaddoc/cap1/${r1.collegeCode}_final.pdf` : '';
+      const r2Pdf = r2 ? `https://dse2026.mahacet.org.in/downloaddoc/cap2/${r2.collegeCode}_final.pdf` : '';
+
+      html += `
+        <div class="journey-card">
+          <div class="journey-header">
+            <div>
+              <span class="journey-student-name">${item.name}</span>
+              <span style="font-size:12px; color:var(--text3); margin-left:8px;">(App ID: <strong>${item.appId}</strong>)</span>
+            </div>
+            <div class="journey-student-meta">
+              <span class="badge-journey-status ${badgeClass}">${badgeText}</span>
+            </div>
+          </div>
+          <div class="journey-body">
+            
+            <!-- CAP ROUND 1 -->
+            <div class="journey-box">
+              <div class="journey-box-title">
+                <span>1️⃣ CAP Round I</span>
+                ${r1Pdf ? `<a href="${r1Pdf}" target="_blank" style="color:var(--accent); text-decoration:none; font-size:10px; font-weight:700;">📥 PDF</a>` : ''}
+              </div>
+              ${r1 ? `
+                <div class="journey-box-college">${r1.collegeName}</div>
+                <div class="journey-box-course">📚 ${r1.course}</div>
+                <div class="journey-box-details">
+                  <span>Score: <strong>${r1.marks}%</strong></span> &nbsp;•&nbsp;
+                  <span>Rank: <strong>${r1.meritNo}</strong></span> &nbsp;•&nbsp;
+                  <span>Seat: <strong style="color:var(--accent-dark)">${r1.seatType}</strong></span>
+                </div>
+              ` : `
+                <div style="color:var(--text3); font-style:italic; font-size:13px; padding:10px 0;">
+                  ❌ Not Allotted in CAP Round I
+                </div>
+              `}
+            </div>
+
+            <!-- ARROW INDICATOR -->
+            <div class="journey-arrow-col">
+              <div class="journey-arrow-icon">➔</div>
+            </div>
+
+            <!-- CAP ROUND 2 -->
+            <div class="journey-box cap2-box">
+              <div class="journey-box-title">
+                <span>2️⃣ CAP Round II</span>
+                ${r2Pdf ? `<a href="${r2Pdf}" target="_blank" style="color:var(--accent); text-decoration:none; font-size:10px; font-weight:700;">📥 PDF</a>` : ''}
+              </div>
+              ${r2 ? `
+                <div class="journey-box-college ${isCollegeChanged ? 'highlight-upgrade' : ''}">
+                  ${r2.collegeName}
+                </div>
+                <div class="journey-box-course ${isCourseChanged ? 'highlight-upgrade' : ''}">
+                  📚 ${r2.course}
+                </div>
+                <div class="journey-box-details">
+                  <span>Score: <strong>${r2.marks}%</strong></span> &nbsp;•&nbsp;
+                  <span>Rank: <strong>${r2.meritNo}</strong></span> &nbsp;•&nbsp;
+                  <span>Seat: <strong style="color:var(--accent-dark)">${r2.seatType}</strong></span>
+                </div>
+              ` : `
+                <div style="color:var(--text3); font-style:italic; font-size:13px; padding:10px 0;">
+                  ❌ Not Allotted in CAP Round II
+                </div>
+              `}
+            </div>
+
+          </div>
+        </div>
+      `;
+    }
+
+    if (area) area.innerHTML = html;
+
+    if (pagEl) {
+      pagEl.innerHTML = '';
+      if (totalPages > 1) {
+        const lo = Math.max(1, bettermentCurrentPage - 3);
+        const hi = Math.min(totalPages, bettermentCurrentPage + 3);
+        if (bettermentCurrentPage > 1) addBettermentPageBtn('« Prev', bettermentCurrentPage - 1);
+        if (lo > 1) { addBettermentPageBtn('1', 1); if (lo > 2) addBettermentEl(); }
+        for (let p = lo; p <= hi; p++) addBettermentPageBtn(p, p, p === bettermentCurrentPage);
+        if (hi < totalPages) { if (hi < totalPages - 1) addBettermentEl(); addBettermentPageBtn(totalPages, totalPages); }
+        if (bettermentCurrentPage < totalPages) addBettermentPageBtn('Next »', bettermentCurrentPage + 1);
+      }
+    }
+  }
+
+  function addBettermentPageBtn(label, pageNum, isActive = false) {
+    const btn = document.createElement('button');
+    btn.textContent = label;
+    if (isActive) btn.classList.add('active');
+    btn.onclick = () => {
+      bettermentCurrentPage = pageNum;
+      renderBettermentResults();
+      const area = document.getElementById('bettermentView');
+      if (area) area.scrollIntoView({ behavior: 'smooth' });
+    };
+    document.getElementById('bettermentPagination').appendChild(btn);
+  }
+
+  function addBettermentEl() {
+    const span = document.createElement('span');
+    span.textContent = '...';
+    span.style.padding = '0 6px';
+    span.style.color = 'var(--text3)';
+    document.getElementById('bettermentPagination').appendChild(span);
   }
 
   // ── THEME TOGGLE ──────────────────────────────────────────────────────────
