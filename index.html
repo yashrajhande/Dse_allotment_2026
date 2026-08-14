@@ -221,6 +221,25 @@
     .round-tabs .tab.active { background: var(--accent); color: #fff; }
     .round-tabs .tab:hover:not(.active):not(.disabled) { background: var(--hover-row); color: var(--accent); }
     .round-tabs .tab.disabled { background: var(--surface2); color: var(--text3); cursor: not-allowed; }
+    .badge-new {
+      display: inline-block;
+      margin-left: 10px;
+      padding: 2px 8px;
+      font-size: 11px;
+      font-weight: 800;
+      border-radius: 20px;
+      background: #fff;
+      color: var(--accent-dark);
+      letter-spacing: 0.5px;
+      vertical-align: middle;
+      animation: badge-pop 1.8s ease-in-out infinite;
+      position: relative;
+      top: -1px;
+    }
+    @keyframes badge-pop {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,255,255,0.5); }
+      50%       { transform: scale(1.08); box-shadow: 0 0 0 5px rgba(255,255,255,0); }
+    }
 
     /* ── CAP ROUND II — RESULTS TODAY HIGHLIGHT ── */
     .tab-cap2-live {
@@ -851,15 +870,10 @@
 <!-- LARGE ROUND TABS -->
 <div class="round-selector-wrapper">
   <div class="round-tabs">
-    <div class="tab active" id="tab-1" onclick="switchRound(1)">CAP Round I</div>
-    <div class="tab tab-cap2-live" id="tab-2">
-      <span class="tab-cap2-title">⚡ CAP Round II</span>
-      <div class="ticker-wrapper">
-        <span class="ticker-track">
-          <span class="pulse-dot"></span>
-          Results dropping TODAY! &nbsp;🔥&nbsp; Your allotment is just hours away — stay tuned! &nbsp;✨&nbsp; Keep refreshing, it's almost here! &nbsp;🚀&nbsp; All the very best to every student! &nbsp;💪
-        </span>
-      </div>
+    <div class="tab" id="tab-1" onclick="switchRound(1)">CAP Round I</div>
+    <div class="tab active" id="tab-2" onclick="switchRound(2)">
+      CAP Round II
+      <span class="badge-new">🎉 NEW</span>
     </div>
   </div>
 </div>
@@ -1003,7 +1017,7 @@
 
 <script>
   // ── STATE ─────────────────────────────────────────────────────────────────
-  let currentRound   = 1;
+  let currentRound   = 2;  // CAP Round 2 results are LIVE — default to Round 2
   let currentView    = 'search'; // 'search' or 'cutoff'
   let rounds         = { 1: null, 2: null }; 
   
@@ -1632,7 +1646,12 @@
   })();
 
   // ── INIT ──────────────────────────────────────────────────────────────────
-  loadRound(1);
+  // CAP Round 2 results are LIVE — load Round 2 by default
+  loadRound(2);
+  // Also update the search/cutoff labels to show Round II on load
+  document.getElementById('searchLabel').textContent = 'Search Students — CAP Round II';
+  document.getElementById('cutoffLabel').textContent = 'Cut-off Analyzer — CAP Round II';
+  document.getElementById('top15Label').textContent  = '🏆 Top 15 Colleges in Maharashtra — Based on CAP Round II Cut-offs';
 </script>
 </body>
 </html>
